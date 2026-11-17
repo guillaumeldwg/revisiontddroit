@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Droit du Travail — Révision Interactive TD 1 à TD 6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Perspective pour l'animation 3D des Flashcards */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        /* Effet de flou pour l'auto-interrogation sur les fiches */
+        .blur-answer {
+            filter: blur(6px);
+            user-select: none;
+            transition: filter 0.2s ease;
+        }
+        .blur-answer:hover, .blur-answer.revealed {
+            filter: blur(0px);
+            user-select: auto;
+        }
+        /* Barre de défilement personnalisée */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.3);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(148, 163, 184, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-200 flex flex-col">
+
+    <!-- EN-TÊTE & PROGRESSION GLOBALE -->
+    <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-600/20">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-lg sm:text-xl font-extrabold tracking-tight">Code & Jurisprudence <span class="text-indigo-500">TD 1–6</span></h1>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Droit du Travail • Préparation Partiel & QCM</p>
+                    </div>
+                </div>
+
+                <!-- Barre de progression globale -->
+                <div class="flex items-center gap-4 flex-1 max-w-md">
+                    <div class="flex-1">
+                        <div class="flex justify-between text-xs font-medium mb-1">
+                            <span class="text-slate-600 dark:text-slate-300">Progression globale</span>
+                            <span id="global-progress-text" class="font-mono font-bold text-indigo-600 dark:text-indigo-400">0% (0/0)</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                            <div id="global-progress-bar" class="h-full bg-gradient-to-r from-indigo-500 to-emerald-500 transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bouton Thème Clair / Sombre & Reset -->
+                <div class="flex items-center gap-2">
+                    <button id="reset-progress-btn" title="Réinitialiser la progression" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-950/60 dark:hover:text-rose-400 transition-colors text-xs font-medium">
+                        Réinitialiser
+                    </button>
+                    <button id="theme-toggle" aria-label="Changer le thème" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                        <svg id="sun-icon" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                        <svg id="moon-icon" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- NAVIGATION PAR TD (ONGLET FILTRE) -->
+            <nav class="mt-3 flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar" id="td-tabs">
+                <!-- Généré dynamiquement en JS -->
+            </nav>
+        </div>
+    </header>
+
+    <!-- BARRE DE MODES D'APPRENTISSAGE & RECHERCHE -->
+    <div class="bg-white dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+            <!-- Sélecteur de mode -->
+            <div class="inline-flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800/90 self-start overflow-x-auto max-w-full">
+                <button data-mode="fiches" class="mode-btn px-3.5 py-2 rounded-lg text-sm font-semibold transition-all bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-sm flex items-center gap-2 whitespace-nowrap">
+                    <span>📚</span> Fiches de synthèse
+                </button>
+                <button data-mode="flashcards" class="mode-btn px-3.5 py-2 rounded-lg text-sm font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-2 whitespace-nowrap">
+                    <span>⚡</span> Flashcards
+                </button>
+                <button data-mode="qcm" class="mode-btn px-3.5 py-2 rounded-lg text-sm font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-2 whitespace-nowrap">
+                    <span>⏱️</span> QCM Chrono
+                </button>
+                <button data-mode="cas" class="mode-btn px-3.5 py-2 rounded-lg text-sm font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-2 whitespace-nowrap">
+                    <span>⚖️</span> Réflexes Cas Pratique
+                </button>
+            </div>
+
+            <!-- Barre de recherche et filtres (visible en mode Fiches) -->
+            <div id="fiches-controls" class="flex flex-wrap items-center gap-2">
+                <div class="relative flex-1 sm:w-64">
+                    <input type="text" id="search-input" placeholder="Rechercher (ex: L. 1242, Uber, 2004...)" class="w-full pl-9 pr-3 py-2 text-sm rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition-all">
+                    <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+                <select id="category-filter" class="px-3 py-2 text-sm rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-indigo-500 focus:outline-none font-medium">
+                    <option value="all">Toutes catégories</option>
+                    <option value="article">Articles de loi</option>
+                    <option value="principe">Principes clés</option>
+                    <option value="jurisprudence">Jurisprudences</option>
+                </select>
+                <button id="toggle-blur-btn" class="px-3 py-2 text-sm rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 font-medium transition-colors flex items-center gap-1.5">
+                    <span>👁️</span> <span id="blur-btn-label">Flouter les réponses</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENEUR PRINCIPAL -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
+        
+        <!-- VUE 1 : FICHES DE SYNTHÈSE -->
+        <section id="view-fiches" class="space-y-6">
+            <!-- En-tête du TD sélectionné -->
+            <div id="td-header-card" class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span id="td-badge" class="px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider rounded-md bg-indigo-100 text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-300">Vue Globale</span>
+                        <span id="td-items-count" class="text-xs text-slate-500 dark:text-slate-400 font-mono"></span>
+                    </div>
+                    <h2 id="td-title" class="text-xl sm:text-2xl font-bold">Ensemble du programme (TD 1 à TD 6)</h2>
+                    <p id="td-subtitle" class="text-sm text-slate-600 dark:text-slate-400 mt-1">Survolez une carte floutée pour révéler la règle ou cliquez sur « Maîtrisé » pour suivre votre avancement.</p>
+                </div>
+                <div class="sm:text-right shrink-0">
+                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Maîtrise de cette sélection</div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-32 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                            <div id="section-progress-bar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                        <span id="section-progress-text" class="font-mono text-sm font-bold text-emerald-600 dark:text-emerald-400">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grille des notions -->
+            <div id="cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Cartes générées par JS -->
+            </div>
+        </section>
+
+        <!-- VUE 2 : FLASHCARDS (MÉMORISATION ACTIVE) -->
+        <section id="view-flashcards" class="hidden max-w-2xl mx-auto space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+                <div class="flex items-center gap-2">
+                    <label class="text-xs font-semibold uppercase text-slate-500">Type :</label>
+                    <select id="fc-type-filter" class="px-3 py-1.5 text-sm rounded-lg bg-slate-100 dark:bg-slate-800 font-medium focus:outline-none">
+                        <option value="all">Tout (Articles, Principes, Arrêts)</option>
+                        <option value="article">Articles uniquement</option>
+                        <option value="jurisprudence">Jurisprudences uniquement</option>
+                        <option value="principe">Principes uniquement</option>
+                    </select>
+                </div>
+                <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
+                    <input type="checkbox" id="fc-only-unmastered" class="rounded text-indigo-600 focus:ring-indigo-500">
+                    <span class="text-slate-700 dark:text-slate-300 font-medium">Uniquement « À revoir »</span>
+                </label>
+                <div class="text-sm font-mono font-bold text-indigo-600 dark:text-indigo-400" id="fc-counter">1 / 10</div>
+            </div>
+
+            <!-- Carte 3D interactive -->
+            <div class="perspective-1000 h-80 sm:h-96 cursor-pointer" id="flashcard-container">
+                <div id="flashcard-inner" class="relative w-full h-full transition-transform duration-500 transform-style-3d">
+                    <!-- RECTO -->
+                    <div class="absolute inset-0 backface-hidden rounded-3xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl p-6 sm:p-8 flex flex-col justify-between">
+                        <div class="flex items-center justify-between">
+                            <span id="fc-front-td" class="px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">TD 1</span>
+                            <span id="fc-front-badge" class="px-3 py-1 rounded-lg text-xs font-bold bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">Article</span>
+                        </div>
+                        <div class="my-auto text-center px-2">
+                            <p class="text-xs uppercase tracking-widest text-slate-400 mb-3 font-semibold">Quelle est la règle ou la solution ?</p>
+                            <h3 id="fc-front-title" class="text-2xl sm:text-3xl font-extrabold font-mono text-slate-900 dark:text-white leading-snug">Art. L. 1221-1</h3>
+                        </div>
+                        <div class="text-center text-xs text-slate-400 flex items-center justify-center gap-1.5">
+                            <span>Cliquez ou appuyez sur <kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded border border-slate-300 dark:border-slate-700 font-mono">Espace</kbd> pour retourner</span>
+                        </div>
+                    </div>
+
+                    <!-- VERSO -->
+                    <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl bg-indigo-950 text-white border-2 border-indigo-500/40 shadow-xl p-6 sm:p-8 flex flex-col justify-between">
+                        <div class="flex items-center justify-between">
+                            <span id="fc-back-title" class="font-mono text-sm font-bold text-indigo-300">Art. L. 1221-1</span>
+                            <span id="fc-back-status" class="text-xs px-2.5 py-1 rounded-full bg-white/10">Non acquis</span>
+                        </div>
+                        <div class="my-auto overflow-y-auto max-h-56 pr-1">
+                            <p id="fc-back-content" class="text-base sm:text-lg leading-relaxed text-slate-100 font-medium"></p>
+                            <div id="fc-back-tip" class="mt-4 p-3 rounded-xl bg-indigo-900/60 border border-indigo-700/50 text-xs text-indigo-200 hidden"></div>
+                        </div>
+                        <div class="text-center text-xs text-indigo-300/70">
+                            Évaluez votre mémorisation ci-dessous
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Boutons d'auto-évaluation -->
+            <div class="grid grid-cols-3 gap-3">
+                <button id="fc-prev-btn" class="py-3 px-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 font-semibold text-sm transition-colors">
+                    ← Précédente
+                </button>
+                <button id="fc-review-btn" class="py-3 px-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 font-bold text-sm transition-colors">
+                    🔄 À revoir
+                </button>
+                <button id="fc-mastered-btn" class="py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/20 transition-colors">
+                    ✅ Acquis !
+                </button>
+            </div>
+        </section>
+
+        <!-- VUE 3 : QCM CHRONOMÉTRÉ (MODE EXAMEN) -->
+        <section id="view-qcm" class="hidden max-w-3xl mx-auto">
+            <!-- Écran d'accueil QCM -->
+            <div id="qcm-setup" class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 text-center space-y-6 shadow-sm">
+                <div class="w-16 h-16 rounded-2xl bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto text-3xl">
+                    ⏱️
+                </div>
+                <div>
+                    <h2 class="text-2xl font-extrabold">Entraînement QCM Examen</h2>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm mt-2 max-w-lg mx-auto">
+                        Testez vos réflexes sur les délais légaux, les numéros d'articles et les solutions des arrêts du programme (filtré selon le TD sélectionné en haut).
+                    </p>
+                </div>
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button onclick="startQCM(10)" class="px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold shadow-lg shadow-indigo-600/20 transition-all">
+                        Série Express (10 questions)
+                    </button>
+                    <button onclick="startQCM(20)" class="px-6 py-3 rounded-2xl bg-slate-800 dark:bg-slate-800 hover:bg-slate-700 text-white font-bold transition-all">
+                        Série Partiel (20 questions)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Écran Question en cours -->
+            <div id="qcm-active" class="hidden space-y-5">
+                <div class="flex items-center justify-between bg-white dark:bg-slate-900 px-5 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <span id="qcm-progress-label" class="font-mono font-bold text-sm text-indigo-600 dark:text-indigo-400">Question 1 / 10</span>
+                        <span id="qcm-td-tag" class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-slate-100 dark:bg-slate-800">TD 1</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span id="qcm-score-live" class="text-xs font-bold text-emerald-600 dark:text-emerald-400">Score : 0</span>
+                        <span id="qcm-timer" class="font-mono font-bold text-sm px-3 py-1 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400">00:00</span>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm space-y-6">
+                    <h3 id="qcm-question-text" class="text-lg sm:text-xl font-bold leading-snug"></h3>
+                    <div id="qcm-options" class="space-y-3">
+                        <!-- Options générées en JS -->
+                    </div>
+                    <div id="qcm-feedback" class="hidden p-4 rounded-2xl text-sm leading-relaxed border">
+                        <!-- Correction immédiate -->
+                    </div>
+                    <div class="flex justify-end">
+                        <button id="qcm-next-btn" class="hidden px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-colors">
+                            Question suivante →
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Écran Résultats QCM -->
+            <div id="qcm-results" class="hidden bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 text-center space-y-6">
+                <div class="text-5xl" id="qcm-result-emoji">🏆</div>
+                <div>
+                    <h2 class="text-2xl font-extrabold">Résultat de votre session</h2>
+                    <p id="qcm-final-score" class="text-3xl font-mono font-extrabold text-indigo-600 dark:text-indigo-400 mt-2">8 / 10</p>
+                    <p id="qcm-final-time" class="text-xs text-slate-500 mt-1">Temps écoulé : 01:45</p>
+                </div>
+                <div id="qcm-review-list" class="text-left space-y-3 max-h-80 overflow-y-auto pr-1">
+                    <!-- Récapitulatif des erreurs -->
+                </div>
+                <button onclick="resetQCM()" class="px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold">
+                    Nouvelle session QCM
+                </button>
+            </div>
+        </section>
+
+        <!-- VUE 4 : RÉFLEXES CAS PRATIQUE (MÉTHODE SYLLOGISME) -->
+        <section id="view-cas" class="hidden max-w-4xl mx-auto space-y-6">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-extrabold flex items-center gap-2">⚖️ Entraînement au Syllogisme (Mini-Cas Pratiques)</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Identifiez le problème de droit, les articles et la jurisprudence avant d'afficher la correction structurée.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="cas-prev-btn" class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-sm font-semibold">← Précédent</button>
+                    <span id="cas-counter" class="font-mono text-sm font-bold px-2">1 / 8</span>
+                    <button id="cas-next-btn" class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-sm font-semibold">Suivant →</button>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm space-y-6">
+                <div class="flex items-center justify-between">
+                    <span id="cas-td-badge" class="px-3 py-1 rounded-lg text-xs font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">TD 2</span>
+                    <span class="text-xs font-mono text-slate-400">Énoncé piège type examen</span>
+                </div>
+
+                <!-- Énoncé des faits -->
+                <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Faits & Question posée</h3>
+                    <p id="cas-enonce" class="text-base sm:text-lg font-medium leading-relaxed"></p>
+                </div>
+
+                <!-- Zone de réflexion personnelle optionnelle -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Votre brouillon rapide (Articles / Arrêts / Solution) :</label>
+                    <textarea id="cas-user-notes" rows="2" placeholder="Notez ici vos réflexes (ex: Art. L. 1242-10, arrêt du 9 oct. 2013...)" class="w-full rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-3 text-sm focus:border-indigo-500 focus:outline-none"></textarea>
+                </div>
+
+                <button id="cas-reveal-btn" class="w-full py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold shadow-lg shadow-indigo-600/20 transition-all">
+                    Révéler le Syllogisme (Majeure / Mineure / Conclusion)
+                </button>
+
+                <!-- Correction structurée -->
+                <div id="cas-solution" class="hidden space-y-4 pt-4 border-t border-slate-200 dark:border-slate-800">
+                    <div class="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20">
+                        <div class="text-xs font-bold uppercase text-blue-600 dark:text-blue-400 mb-1">1. Problème de droit</div>
+                        <p id="cas-sol-probleme" class="text-sm font-semibold"></p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+                        <div class="text-xs font-bold uppercase text-amber-600 dark:text-amber-400 mb-1">2. Règle de droit (Articles & Jurisprudence)</div>
+                        <p id="cas-sol-regle" class="text-sm leading-relaxed"></p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+                        <div class="text-xs font-bold uppercase text-emerald-600 dark:text-emerald-400 mb-1">3. Application & Conclusion</div>
+                        <p id="cas-sol-conclusion" class="text-sm leading-relaxed font-medium"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DE CONFIRMATION RESET -->
+    <div id="reset-modal" class="hidden fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl">
+            <h3 class="text-lg font-bold">Réinitialiser votre progression ?</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400">Toutes les cartes marquées comme « Maîtrisées » seront remises à zéro.</p>
+            <div class="flex justify-end gap-2 pt-2">
+                <button id="cancel-reset-btn" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-sm font-semibold">Annuler</button>
+                <button id="confirm-reset-btn" class="px-4 py-2 rounded-xl bg-rose-600 text-white text-sm font-semibold hover:bg-rose-500">Tout effacer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // BASE DE DONNÉES COMPLÈTE DU PROGRAMME (TD 1 À TD 6)
+        // =========================================================================
+        const TD_META = {
+            all: { label: "Tout (TD 1–6)", title: "Ensemble du programme (TD 1 à TD 6)", subtitle: "Tous les articles, principes et arrêts de jurisprudence réunis." },
+            td1: { label: "TD 1 • Qualification", title: "TD 1 : La qualification du contrat de travail", subtitle: "Critères du contrat de travail, lien de subordination et requalification des indépendants." },
+            td2: { label: "TD 2 • Conclusion & PE", title: "TD 2 : La conclusion du contrat de travail", subtitle: "Recrutement, droit au mensonge, période d'essai (durées, renouvellement, rupture) et grossesse." },
+            td3: { label: "TD 3 • CDD & Temps partiel", title: "TD 3 : Les contrats de travail dérogatoires", subtitle: "Cas de recours, renouvellements, formalisme du CDD, requalification et régime du temps partiel." },
+            td4: { label: "TD 4 • Durée & Salaire", title: "TD 4 : Durée du travail, forfait jours et rémunération", subtitle: "Heures supplémentaires, charge de la preuve, contrôle du forfait jours et égalité salariale." },
+            td5: { label: "TD 5 • Modification", title: "TD 5 : Modification du contrat vs Conditions de travail", subtitle: "Distinction socle contractuel / pouvoir de direction (rémunération, lieu, tâches, horaire de nuit)." },
+            td6: { label: "TD 6 • Licenciement", title: "TD 6 : Le licenciement pour motif personnel", subtitle: "Cause réelle et sérieuse, échelle des fautes, insuffisance, vie personnelle, inaptitude et procédure." }
+        };
+
+        const KNOWLEDGE_ITEMS = [
+            // ================= TD 1 =================
+            {
+                id: "td1-art-1", td: "td1", category: "article",
+                title: "Art. L. 1221-1 Code du travail",
+                content: "Définition générale du contrat de travail (soumis aux règles du droit commun et caractérisé par la réunion d'une prestation de travail, d'une rémunération et d'un lien de subordination).",
+                tip: "Base légale systématique pour toute demande de requalification."
+            },
+            {
+                id: "td1-art-2", td: "td1", category: "article",
+                title: "Art. L. 8221-6 Code du travail",
+                content: "Présomption simple de non-salariat pour les travailleurs indépendants immatriculés (RCS, Répertoire des métiers, URSSAF/Sirene). Elle peut être renversée s'il est établi qu'ils fournissent des prestations dans des conditions les plaçant dans un lien de subordination juridique permanente.",
+                tip: "La charge de la preuve pèse sur celui qui demande la requalification."
+            },
+            {
+                id: "td1-prin-1", td: "td1", category: "principe",
+                title: "Les 3 critères cumulatifs du contrat de travail",
+                content: "1) Une prestation de travail ; 2) Une rémunération ; 3) Un lien de subordination juridique (critère décisif qui distingue le salarié du travailleur indépendant).",
+                tip: "Sans lien de subordination, même avec une rémunération régulière, il n'y a pas de contrat de travail."
+            },
+            {
+                id: "td1-prin-2", td: "td1", category: "principe",
+                title: "Indisponibilité de la qualification",
+                content: "L'existence d'une relation de travail ne dépend ni de la volonté exprimée par les parties ni de la dénomination qu'elles ont donnée à leur convention, mais des conditions de fait dans lesquelles est exercée l'activité (faisceau d'indices).",
+                tip: "Un contrat intitulé 'prestation de services' ou 'auto-entrepreneur' n'empêche jamais le juge de requalifier."
+            },
+            {
+                id: "td1-prin-3", td: "td1", category: "principe",
+                title: "Critère du service organisé",
+                content: "Le travail au sein d'un service organisé constitue seulement un indice du lien de subordination, à la condition que l'employeur en détermine unilatéralement les conditions d'exécution.",
+                tip: "Ne suffit pas à lui seul : il faut prouver le caractère unilatéral des contraintes."
+            },
+            {
+                id: "td1-prin-4", td: "td1", category: "principe",
+                title: "Universalité de la prestation de travail",
+                content: "Peu importe la nature de l'activité : toute activité humaine (participation à un jeu télévisé, pratique de l'e-sport) peut constituer une prestation de travail dès lors qu'elle est exercée sous subordination moyennant rémunération.",
+                tip: "Utile pour les cas pratiques sur les joueurs e-sport ou candidats TV."
+            },
+            {
+                id: "td1-jur-1", td: "td1", category: "jurisprudence",
+                title: "Arrêt Société Générale (Cass. soc., 13 nov. 1996)",
+                content: "Définit le lien de subordination comme l'exécution d'un travail sous l'autorité d'un employeur qui a le pouvoir de donner des ordres et des directives (direction), d'en contrôler l'exécution (contrôle) et de sanctionner les manquements (sanction).",
+                tip: "Arrêt fondateur indispensable à citer dans tout cas de requalification."
+            },
+            {
+                id: "td1-jur-2", td: "td1", category: "jurisprudence",
+                title: "Arrêt Labanne (Cass. soc., 19 déc. 2000)",
+                content: "Consacre le principe d'indisponibilité de la qualification du contrat de travail : le juge doit analyser les conditions réelles d'exercice de l'activité au-delà de l'intitulé du contrat.",
+                tip: "À coupler avec l'arrêt Société Générale de 1996."
+            },
+            {
+                id: "td1-jur-3", td: "td1", category: "jurisprudence",
+                title: "Arrêts Télé-réalité (Île de la tentation 2009 / Koh-Lanta 25 juin 2013 / Pékin Express 4 févr. 2015)",
+                content: "La participation à une émission de télé-réalité est requalifiée en contrat de travail lorsque les participants sont soumis à des règles strictes, un emploi du temps imposé, des directives de la production et perçoivent une contrepartie.",
+                tip: "Illustre l'universalité de la prestation de travail."
+            },
+            {
+                id: "td1-jur-4", td: "td1", category: "jurisprudence",
+                title: "Arrêt Club de rugby (Cass. soc., 28 avr. 2011)",
+                content: "Requalification en contrat de travail de la relation entre un club sportif et un joueur soumis à des entraînements obligatoires, des directives techniques et percevant des sommes dépassant le simple remboursement de frais.",
+                tip: "Directement transposable aux sportifs et joueurs e-sport."
+            },
+            {
+                id: "td1-jur-5", td: "td1", category: "jurisprudence",
+                title: "Arrêts Uber (2020 vs 2025) & Recruteur sportif (2026)",
+                content: "Uber (4 mars 2020) : requalification confirmée car faisceau d'indices suffisant (géolocalisation, fixation des tarifs, déconnexion/sanction). À l'inverse, Uber (2025) et Recruteur sportif (2026) : pas de requalification lorsque les indices relevés ne suffisent pas à démontrer la subordination.",
+                tip: "Montre que l'appréciation du faisceau d'indices relève du pouvoir souverain des juges du fond."
+            },
+
+            // ================= TD 2 =================
+            {
+                id: "td2-art-1", td: "td2", category: "article",
+                title: "Art. L. 1221-6 Code du travail",
+                content: "Les informations demandées au candidat à un emploi ne peuvent avoir comme finalité que d'apprécier sa capacité à occuper l'emploi proposé ou ses aptitudes professionnelles. Elles doivent présenter un lien direct et nécessaire avec l'emploi.",
+                tip: "Interdit les questions sur la grossesse, la famille, la santé, la religion, etc."
+            },
+            {
+                id: "td2-art-2", td: "td2", category: "article",
+                title: "Art. L. 1132-1 Code du travail",
+                content: "Principe général de non-discrimination : aucune personne ne peut être écartée d'une procédure de recrutement ou voir sa période d'essai rompue en raison d'un motif discriminatoire (grossesse, sexe, origine, âge, santé, etc.).",
+                tip: "Sanction : nullité de l'acte ou de la rupture."
+            },
+            {
+                id: "td2-art-3", td: "td2", category: "article",
+                title: "Art. L. 1221-19 & L. 1221-21 Code du travail",
+                content: "Durées maximales de la période d'essai initiale (et renouvellement inclus) en CDI :\n• Ouvriers et employés : 2 mois → 4 mois max\n• Agents de maîtrise et techniciens : 3 mois → 6 mois max\n• Cadres : 4 mois → 8 mois max",
+                tip: "La période d'essai ne se présume pas : elle doit être écrite dans le contrat ou la lettre d'engagement."
+            },
+            {
+                id: "td2-art-4", td: "td2", category: "article",
+                title: "Art. L. 1221-20 Code du travail",
+                content: "La période d'essai permet à l'employeur d'évaluer les compétences du salarié dans son travail, notamment au regard de son expérience, et au salarié d'apprécier si les fonctions lui conviennent.",
+                tip: "Toute rupture étrangère à cette finalité (ex: motif disciplinaire ou économique) est abusive."
+            },
+            {
+                id: "td2-art-5", td: "td2", category: "article",
+                title: "Art. L. 1221-25 Code du travail",
+                content: "Délai de prévenance lorsque l'employeur rompt la période d'essai :\n• 24 heures si < 8 jours de présence\n• 48 heures entre 8 jours et 1 mois\n• 2 semaines après 1 mois de présence\n• 1 mois après 3 mois de présence",
+                tip: "Le délai de prévenance ne prolonge pas la période d'essai au-delà de son terme."
+            },
+            {
+                id: "td2-art-6", td: "td2", category: "article",
+                title: "Art. L. 1243-11 (dernier alinéa) Code du travail",
+                content: "Lorsque la relation contractuelle de travail se poursuit après l'échéance du terme du CDD (embauche en CDI sur le même poste), la durée du contrat à durée déterminée est déduite de la période d'essai éventuellement prévue dans le nouveau contrat.",
+                tip: "Réflexe examen : déduire la totalité des CDD sur le même emploi !"
+            },
+            {
+                id: "td2-art-7", td: "td2", category: "article",
+                title: "Art. L. 1225-1, L. 1225-3 & L. 1225-4 Code du travail",
+                content: "Protection de la maternité : interdiction de rechercher l'état de grossesse à l'embauche, droit pour la salariée de ne pas le révéler, et interdiction absolue de rompre le contrat en raison de la grossesse.",
+                tip: "Une rupture d'essai liée même partiellement à la grossesse est nulle."
+            },
+            {
+                id: "td2-prin-1", td: "td2", category: "principe",
+                title: "Droit au mensonge du candidat",
+                content: "Face à une question illicite posée lors d'un entretien d'embauche (sans lien direct et nécessaire avec le poste, ex : projet de grossesse), le candidat n'est pas tenu de répondre sincèrement et bénéficie d'un droit au mensonge.",
+                tip: "L'employeur ne peut pas sanctionner un mensonge portant sur la vie privée."
+            },
+            {
+                id: "td2-prin-2", td: "td2", category: "principe",
+                title: "Les 3 conditions cumulatives du renouvellement de l'essai",
+                content: "1) Prévu par un accord de branche étendu ;\n2) Prévu expressément dans le contrat de travail (ou lettre d'engagement) ;\n3) Accord exprès et non équivoque du salarié recueilli PENDANT la période d'essai initiale (avant son terme).",
+                tip: "Si l'une des 3 conditions manque, le renouvellement est nul et le contrat devient définitif."
+            },
+            {
+                id: "td2-prin-3", td: "td2", category: "principe",
+                title: "Sanction du non-respect du délai de prévenance vs rupture hors délai",
+                content: "• Si la rupture est notifiée AVANT la fin de l'essai mais sans respecter le délai de prévenance : la rupture reste valable, mais l'employeur verse une indemnité compensatrice.\n• Si la rupture intervient APRÈS la fin de l'essai : c'est un licenciement sans cause réelle et sérieuse.",
+                tip: "Ne jamais confondre ces deux sanctions !"
+            },
+            {
+                id: "td2-jur-1", td: "td2", category: "jurisprudence",
+                title: "Cass. soc. — Renouvellement de la période d'essai (jurisprudence constante)",
+                content: "La simple lettre d'information unilatérale de l'employeur, ou la seule signature du salarié apposée pour accuser réception d'un courrier de renouvellement, ne suffit pas à caractériser son accord exprès et non équivoque.",
+                tip: "Il faut une mention manuscrite claire ('Bon pour accord pour le renouvellement') avant le terme."
+            },
+            {
+                id: "td2-jur-2", td: "td2", category: "jurisprudence",
+                title: "Cass. soc., 9 oct. 2013 (CDD suivi d'un CDI)",
+                content: "Lorsque le salarié a occupé le même emploi en CDD avant d'être embauché en CDI, la durée du ou des CDD précédents doit être déduite de la période d'essai, peu importe qu'il y ait eu une courte interruption entre les contrats. Cela peut supprimer toute période d'essai.",
+                tip: "Attention au piège d'une coupure de quelques jours entre le CDD et le CDI : la déduction s'applique quand même."
+            },
+            {
+                id: "td2-jur-3", td: "td2", category: "jurisprudence",
+                title: "Jurisprudence sur la salariée enceinte en période d'essai",
+                content: "Si la protection spécifique contre le licenciement (art. L. 1225-4) ne s'applique pas en tant que telle pendant l'essai, l'employeur ne peut pas rompre l'essai pour un motif lié, même partiellement, à la grossesse (nullité, art. L. 1132-1). Il doit prouver des motifs objectifs d'inaptitude antérieurs et étrangers.",
+                tip: "L'employeur doit conserver des preuves datées d'avant l'annonce de la grossesse."
+            },
+
+            // ================= TD 3 =================
+            {
+                id: "td3-art-1", td: "td3", category: "article",
+                title: "Art. L. 1242-1 Code du travail",
+                content: "Un contrat de travail à durée déterminée, quel que soit son motif, ne peut avoir ni pour objet ni pour effet de pourvoir durablement un emploi lié à l'activité normale et permanente de l'entreprise.",
+                tip: "Principe cardinal de tout le droit du CDD."
+            },
+            {
+                id: "td3-art-2", td: "td3", category: "article",
+                title: "Art. L. 1242-8-1 & L. 1242-13-1 Code du travail",
+                content: "À défaut d'accord de branche étendu fixant d'autres règles, la durée totale du CDD ne peut excéder 18 mois (renouvellements compris) et le contrat est renouvelable au maximum 2 fois.",
+                tip: "Un 3e renouvellement sans accord de branche entraîne la requalification en CDI."
+            },
+            {
+                id: "td3-art-3", td: "td3", category: "article",
+                title: "Art. L. 1242-10 Code du travail",
+                content: "Période d'essai maximale en CDD : 1 jour par semaine dans la limite de 2 semaines si le contrat est <= 6 mois ; 1 mois maximum si le contrat est > 6 mois. Le renouvellement de la période d'essai en CDD est impossible.",
+                tip: "Une clause prévoyant 3 mois d'essai ou un renouvellement en CDD est réputée non écrite."
+            },
+            {
+                id: "td3-art-4", td: "td3", category: "article",
+                title: "Art. L. 1242-12 & L. 1242-13 Code du travail",
+                content: "Le CDD doit être établi par écrit et comporter la définition précise de son motif (nom et qualification du salarié remplacé, etc.) ainsi que les caisses de retraite/prévoyance. Il doit être transmis au salarié au plus tard dans les 2 jours ouvrables suivant l'embauche.",
+                tip: "L'absence d'écrit ou de motif précis entraîne la requalification automatique en CDI."
+            },
+            {
+                id: "td3-art-5", td: "td3", category: "article",
+                title: "Art. L. 1242-15 & L. 1242-16 Code du travail",
+                content: "Égalité de rémunération entre le salarié en CDD et un salarié en CDI de qualification équivalente occupant les mêmes fonctions. Droit à une indemnité compensatrice de congés payés égale au minimum à 1/10e de la rémunération brute totale.",
+                tip: "Toute clause privant le salarié en CDD de ses congés payés est nulle."
+            },
+            {
+                id: "td3-art-6", td: "td3", category: "article",
+                title: "Art. L. 1243-1 & L. 1243-2 Code du travail",
+                content: "Cas limitatifs de rupture anticipée du CDD avant son terme : accord des parties, faute grave, force majeure, inaptitude constatée par le médecin du travail, ou justification par le salarié d'une embauche en CDI (préavis max 2 semaines).",
+                tip: "En dehors de ces 5 cas, ni l'employeur ni le salarié ne peut rompre librement le CDD."
+            },
+            {
+                id: "td3-art-7", td: "td3", category: "article",
+                title: "Art. L. 1243-8 & L. 1243-10 Code du travail",
+                content: "Indemnité de fin de contrat (prime de précarité) égale à 10 % de la rémunération brute totale versée durant le contrat. Elle est d'ordre public (toute renonciation anticipée est nulle), sauf exceptions légales (embauche en CDI, emploi saisonnier, faute grave...).",
+                tip: "En cas de départ du salarié pour un CDI, la prime de précarité n'est pas due."
+            },
+            {
+                id: "td3-art-8", td: "td3", category: "article",
+                title: "Art. L. 1243-13 Code du travail",
+                content: "Les conditions de renouvellement du CDD sont stipulées dans le contrat ou font l'objet d'un avenant soumis au salarié avant le terme initialement prévu.",
+                tip: "Si le salarié continue de travailler après le terme sans avenant signé avant l'échéance, le contrat devient un CDI."
+            },
+            {
+                id: "td3-art-9", td: "td3", category: "article",
+                title: "Art. L. 1245-1 & L. 1245-2 Code du travail",
+                content: "En cas de méconnaissance des règles de fond ou de forme du CDD, le juge prononce la requalification en CDI dès le 1er jour, condamne l'employeur à une indemnité de requalification d'au moins 1 mois de salaire, et la rupture produit les effets d'un licenciement sans cause réelle et sérieuse.",
+                tip: "Cumul possible de l'indemnité de requalification + indemnités de licenciement sans CRS."
+            },
+            {
+                id: "td3-art-10", td: "td3", category: "article",
+                title: "Art. L. 3123-6 & L. 3123-12 (al. 2) Code du travail",
+                content: "Le contrat à temps partiel doit être écrit et mentionner la durée, la répartition des horaires et les cas de modification. Même si une clause le prévoit, le salarié peut refuser un changement d'horaires s'il justifie d'obligations familiales impérieuses, du suivi d'études ou d'une autre activité professionnelle.",
+                tip: "Un refus fondé sur l'un de ces motifs légitimes n'est jamais une faute."
+            },
+            {
+                id: "td3-art-11", td: "td3", category: "article",
+                title: "Art. L. 1121-1 Code du travail",
+                content: "Principe de proportionnalité : nul ne peut apporter aux droits des personnes et aux libertés individuelles des restrictions qui ne seraient pas justifiées par la nature de la tâche à accomplir ni proportionnées au but recherché (ex : nullité d'une clause d'exclusivité générale sur un temps partiel).",
+                tip: "À utiliser contre les clauses abusives (exclusivité, mobilité floue)."
+            },
+            {
+                id: "td3-prin-1", td: "td3", category: "principe",
+                title: "Distinction besoin structurel vs besoin conjoncturel",
+                content: "Le CDI est la forme normale pour répondre à un besoin structurel (permanent) de l'entreprise. Le CDD est un contrat d'exception limité à un besoin conjoncturel (temporaire).",
+                tip: "Toujours poser cette distinction en introduction d'un cas sur les CDD."
+            },
+            {
+                id: "td3-prin-2", td: "td3", category: "principe",
+                title: "Régime du temps partiel : durée minimale et délai de prévenance",
+                content: "La durée minimale légale du temps partiel est de 24 heures par semaine (sauf étudiant < 26 ans, demande écrite motivée du salarié ou accord de branche). Toute modification de la répartition des horaires doit être notifiée au moins 7 jours avant (réductible à 3 jours par accord collectif).",
+                tip: "Attention aux chiffres : 24h minimum / 7 jours de prévenance."
+            },
+            {
+                id: "td3-jur-1", td: "td3", category: "jurisprudence",
+                title: "Cass. soc., 29 sept. 2004 & 26 janv. 2005 (CDD de remplacement successifs)",
+                content: "Bien que la loi autorise la conclusion de CDD de remplacement successifs avec le même salarié sans délai de carence, le juge requalifie la relation en CDI lorsque le nombre et la durée des contrats (ex : 22 contrats en 14 mois) démontrent que l'employeur pourvoit en réalité un emploi permanent.",
+                tip: "L'argument des contrats 'distincts et autonomes' est inopérant face à un besoin structurel."
+            },
+            {
+                id: "td3-jur-2", td: "td3", category: "jurisprudence",
+                title: "CJUE, arrêt Kücük (26 janv. 2012)",
+                content: "Le recours à des CDD successifs pour remplacer des salariés absents n'est pas en soi abusif, même si le besoin de remplacement est récurrent, mais le juge national doit apprécier globalement toutes les circonstances (nombre de contrats, durée cumulée) pour vérifier l'absence de détournement.",
+                tip: "Complète les arrêts de la Cour de cassation de 2004 et 2005."
+            },
+
+            // ================= TD 4 =================
+            {
+                id: "td4-art-1", td: "td4", category: "article",
+                title: "Art. L. 3121-28 & L. 3121-33 Code du travail",
+                content: "Toute heure accomplie au-delà de la durée légale hebdomadaire (35 heures) est une heure supplémentaire ouvrant droit à une majoration salariale (à défaut d'accord collectif : +25 % pour les 8 premières heures, de la 36e à la 43e, et +50 % au-delà).",
+                tip: "Vérifier s'il existe un accord collectif avant d'appliquer les taux légaux supplétifs."
+            },
+            {
+                id: "td4-art-2", td: "td4", category: "article",
+                title: "Art. L. 3171-4 Code du travail",
+                content: "Charge de la preuve des heures supplémentaires partagée : le salarié doit présenter des éléments suffisamment précis quant aux heures non rémunérées qu'il prétend avoir accomplies (agenda, tableau Excel) pour permettre à l'employeur d'y répondre en fournissant ses propres éléments de contrôle.",
+                tip: "Un simple tableau Excel établi par le salarié suffit à étayer sa demande."
+            },
+            {
+                id: "td4-art-3", td: "td4", category: "article",
+                title: "Art. L. 3121-58 Code du travail",
+                content: "Conditions de validité d'une convention individuelle de forfait en jours : réservée aux cadres disposant d'une autonomie dans l'organisation de leur emploi du temps ou aux salariés non-cadres dont la durée du travail ne peut être prédéterminée et qui disposent d'une réelle autonomie.",
+                tip: "Exige un accord collectif préalable + une convention individuelle écrite."
+            },
+            {
+                id: "td4-art-4", td: "td4", category: "article",
+                title: "Art. L. 3121-62 Code du travail",
+                content: "Le salarié en forfait jours n'est pas soumis à la durée légale de 35h ni aux durées maximales quotidienne (10h) et hebdomadaire (48h) de travail. En revanche, il bénéficie obligatoirement des repos minimaux : 11 heures de repos quotidien et 35 heures de repos hebdomadaire (24h + 11h).",
+                tip: "Piège classique : pas de 35h ni de 10h/jour max, MAIS les 11h de repos quotidien restent impératives !"
+            },
+            {
+                id: "td4-art-5", td: "td4", category: "article",
+                title: "Art. L. 3121-64 Code du travail",
+                content: "L'accord collectif autorisant le forfait jours doit fixer les modalités selon lesquelles l'employeur assure l'évaluation et le suivi régulier de la charge de travail, la communication périodique (entretien annuel) sur la charge, l'articulation vie pro/vie perso et la rémunération.",
+                tip: "Si l'employeur n'organise pas le suivi, il engage sa responsabilité."
+            },
+            {
+                id: "td4-art-6", td: "td4", category: "article",
+                title: "Art. L. 3221-2 Code du travail",
+                content: "Tout employeur assure, pour un même travail ou pour un travail de valeur égale, l'égalité de rémunération entre les femmes et les hommes.",
+                tip: "Socle légal du principe général 'à travail égal, salaire égal'."
+            },
+            {
+                id: "td4-prin-1", td: "td4", category: "principe",
+                title: "Définition du temps de travail effectif",
+                content: "Temps pendant lequel le salarié est à la disposition de l'employeur et se conforme à ses directives sans pouvoir vaquer librement à des occupations personnelles.",
+                tip: "Permet de distinguer le vrai travail des temps de pause ou de connexion volontaire."
+            },
+            {
+                id: "td4-prin-2", td: "td4", category: "principe",
+                title: "Contrôle de la charge de travail en forfait jours",
+                content: "Il appartient à l'employeur de prouver qu'il veille au respect des temps de repos quotidien (11h) et hebdomadaire (35h) et que l'amplitude de travail reste raisonnable. À défaut, le salarié peut obtenir des dommages-intérêts pour manquement à l'obligation de sécurité (voire la privation d'effet du forfait).",
+                tip: "Des journées de 8h à 21h30 violent le repos quotidien de 11h (seulement 10h30 de repos)."
+            },
+            {
+                id: "td4-prin-3", td: "td4", category: "principe",
+                title: "Principe « à travail égal, salaire égal »",
+                content: "L'employeur doit assurer l'égalité de rémunération entre salariés placés dans une situation identique. Une différence de salaire est admise uniquement si l'employeur la justifie par des raisons objectives, pertinentes et matériellement vérifiables.",
+                tip: "Charge de la preuve en deux temps : le salarié présente des indices, l'employeur justifie objectivement."
+            },
+            {
+                id: "td4-jur-1", td: "td4", category: "jurisprudence",
+                title: "Cass. soc., 20 mars 1980 & 14 nov. 2018 (Accord implicite / Nécessité des HS)",
+                content: "Le salarié peut prétendre au paiement des heures supplémentaires accomplies soit avec l'accord au moins implicite de l'employeur, soit lorsqu'elles ont été rendues nécessaires par les tâches qui lui ont été confiées.",
+                tip: "Les deux critères alternatifs à vérifier systématiquement en cas pratique !"
+            },
+            {
+                id: "td4-jur-2", td: "td4", category: "jurisprudence",
+                title: "Arrêt du 25 mars 2026 (Mails traités le soir par convenance personnelle)",
+                content: "Le salarié qui choisit de sa propre initiative de traiter ses courriels le soir pour s'alléger sa charge du lendemain, sans demande ni accord implicite de l'employeur et sans que la charge de travail ne le rende nécessaire, ne peut obtenir le paiement d'heures supplémentaires.",
+                tip: "Jurisprudence récente issue directement du TD 4 (cas d'Arlette)."
+            },
+            {
+                id: "td4-jur-3", td: "td4", category: "jurisprudence",
+                title: "Cass. soc., 21 juin 2005 (Urgence du recrutement)",
+                content: "La nécessité pour l'employeur de recruter d'urgence un salarié qualifié pour éviter un blocage de l'activité constitue une raison objective et pertinente pouvant justifier une différence de rémunération à l'embauche.",
+                tip: "Exception reconnue au principe 'à travail égal, salaire égal'."
+            },
+            {
+                id: "td4-jur-4", td: "td4", category: "jurisprudence",
+                title: "Cass. soc., 15 nov. 2006 (Expérience professionnelle antérieure)",
+                content: "L'expérience professionnelle acquise par un salarié dans d'autres relations contractuelles (chez un précédent employeur) constitue un critère objectif et pertinent justifiant une rémunération supérieure à celle d'un collègue moins expérimenté.",
+                tip: "Ne pas confondre ancienneté dans l'entreprise (souvent liée à une prime distincte) et expérience acquise ailleurs."
+            },
+
+            // ================= TD 5 =================
+            {
+                id: "td5-art-1", td: "td5", category: "article",
+                title: "Art. L. 1221-1 Code du travail & Art. 1103 Code civil",
+                content: "Le contrat de travail légalement formé tient lieu de loi à ceux qui l'ont fait : l'employeur ne peut modifier unilatéralement les éléments essentiels du socle contractuel sans l'accord exprès du salarié, mais peut changer les simples conditions de travail en vertu de son pouvoir de direction.",
+                tip: "C'est la summa divisio du TD 5 : Modification du contrat vs Changement des conditions de travail."
+            },
+            {
+                id: "td5-prin-1", td: "td5", category: "principe",
+                title: "Régime de la modification du contrat de travail (Socle contractuel)",
+                content: "Touche aux éléments essentiels : Rémunération (montant et mode de calcul, même favorable), Qualification professionnelle, Durée du travail, Lieu de travail (hors secteur géographique). Exige l'accord exprès du salarié. Son refus n'est jamais fautif et ne peut être sanctionné.",
+                tip: "Une clause permettant à l'employeur de modifier seul le secteur avec baisse de rémunération est nulle."
+            },
+            {
+                id: "td5-prin-2", td: "td5", category: "principe",
+                title: "Régime du changement des conditions de travail",
+                content: "Relève du pouvoir de direction unilatéral de l'employeur (ex : nouvelles tâches conformes à la qualification, mutation dans le même secteur géographique, aménagement des horaires de jour). Le refus du salarié constitue une faute disciplinaire.",
+                tip: "Le salarié ne peut pas s'y opposer sauf atteinte excessive à sa vie personnelle."
+            },
+            {
+                id: "td5-prin-3", td: "td5", category: "principe",
+                title: "Validité de la clause de mobilité",
+                content: "Pour être licite et opposable, une clause de mobilité doit définir de façon précise sa zone géographique d'application (ex : région, département) et ne pas conférer à l'employeur le pouvoir d'en étendre unilatéralement la portée.",
+                tip: "Une clause stipulant 'partout où les nécessités l'exigeront' est nulle."
+            },
+            {
+                id: "td5-jur-1", td: "td5", category: "jurisprudence",
+                title: "Cass. soc., 2 févr. 1999 (Qualification professionnelle)",
+                content: "La qualification professionnelle du salarié constitue un élément essentiel du contrat de travail qui ne peut être modifié sans son accord exprès.",
+                tip: "Arrêt de principe sur le caractère contractuel de la qualification."
+            },
+            {
+                id: "td5-jur-2", td: "td5", category: "jurisprudence",
+                title: "Cass. soc., 24 avr. 2001 & 18 mai 2005 (Changement de tâches)",
+                content: "L'employeur peut confier au salarié de nouvelles tâches dès lors qu'elles correspondent à sa qualification (simple changement des conditions de travail). En revanche, retirer des attributions essentielles contractualisées ou vider le poste de sa substance modifie le contrat.",
+                tip: "Toujours vérifier si les tâches retirées étaient expressément inscrites au contrat."
+            },
+            {
+                id: "td5-jur-3", td: "td5", category: "jurisprudence",
+                title: "Cass. soc., 22 janv. 2003 (Déplacement occasionnel hors secteur)",
+                content: "L'employeur peut imposer au salarié un déplacement occasionnel et temporaire en dehors du secteur géographique habituel, même en l'absence de clause de mobilité, à condition que la mission soit justifiée par l'intérêt de l'entreprise et que la spécificité des fonctions l'implique.",
+                tip: "Ne pas confondre mutation définitive (exige clause ou accord) et déplacement occasionnel."
+            },
+            {
+                id: "td5-jur-4", td: "td5", category: "jurisprudence",
+                title: "Cass. soc., 7 avr. 2004 (Passage horaire de jour à horaire de nuit)",
+                content: "Le passage, même partiel, d'un horaire de jour à un horaire de nuit (ou inversement) constitue toujours une modification du contrat de travail qui doit être acceptée par le salarié, nonobstant toute clause contractuelle ou conventionnelle contraire.",
+                tip: "Solution impérative : même si le contrat prévoit la possibilité de travailler de nuit, l'accord exprès reste exigé !"
+            },
+            {
+                id: "td5-jur-5", td: "td5", category: "jurisprudence",
+                title: "Cass. soc., 25 mai 2011 (Déclassification)",
+                content: "Toute déclassification (baisse de niveau hiérarchique, retrait d'encadrement ou réduction des responsabilités) constitue une modification du contrat de travail interdite sans l'accord exprès du salarié.",
+                tip: "Même si le salaire est maintenu, la baisse de responsabilités modifie le contrat."
+            },
+            {
+                id: "td5-jur-6", td: "td5", category: "jurisprudence",
+                title: "Cass. soc., 26 oct. 2011 (Retrait de délégation de signature)",
+                content: "Le retrait d'une délégation de signature ou de responsabilités inhérentes aux fonctions contractualisées du salarié constitue une modification du contrat de travail nécessitant son accord.",
+                tip: "À citer dès qu'un employeur retire des prérogatives clés à un cadre ou responsable."
+            },
+
+            // ================= TD 6 =================
+            {
+                id: "td6-art-1", td: "td6", category: "article",
+                title: "Art. L. 1232-1 Code du travail",
+                content: "Tout licenciement pour motif personnel doit être motivé et justifié par une cause réelle (objective, existante, exacte et matériellement vérifiable) et sérieuse (suffisamment grave pour rendre impossible la continuation du travail sans dommage).",
+                tip: "Notion impérative : une clause du contrat ne peut pas prédéfinir une cause automatique de licenciement."
+            },
+            {
+                id: "td6-art-2", td: "td6", category: "article",
+                title: "Art. L. 1235-1 Code du travail",
+                content: "Charge de la preuve de la cause réelle et sérieuse : le juge forme sa conviction au vu des éléments fournis par les parties. Si un doute subsiste, il profite au salarié.",
+                tip: "Attention : pour la faute grave ou lourde, la charge exclusive de la preuve pèse sur l'employeur."
+            },
+            {
+                id: "td6-art-3", td: "td6", category: "article",
+                title: "Art. L. 1134-1 & L. 1154-1 Code du travail",
+                content: "Aménagement de la charge de la preuve en matière de discrimination (L. 1134-1) et de harcèlement (L. 1154-1) : le salarié présente des éléments de fait laissant supposer l'existence de l'atteinte, puis l'employeur doit prouver que sa décision est justifiée par des éléments objectifs étrangers.",
+                tip: "Mécanisme en deux temps très fréquent en contentieux."
+            },
+            {
+                id: "td6-art-4", td: "td6", category: "article",
+                title: "Art. L. 6321-1 Code du travail",
+                content: "L'employeur assure l'adaptation des salariés à leur poste de travail et veille au maintien de leur capacité à occuper un emploi, au regard notamment de l'évolution des emplois, des technologies et des organisations.",
+                tip: "Indispensable pour contester un licenciement pour insuffisance professionnelle."
+            },
+            {
+                id: "td6-art-5", td: "td6", category: "article",
+                title: "Art. L. 1226-2, L. 1226-4 & L. 1226-10 à L. 1226-12 Code du travail",
+                content: "Régime de l'inaptitude : l'employeur doit rechercher sérieusement et loyalement un poste de reclassement conforme aux conclusions du médecin du travail après avis du CSE (sauf mention expresse de dispense par le médecin). Si le salarié n'est ni reclassé ni licencié à l'issue d'1 mois, le versement du salaire reprend.",
+                tip: "Vérifier les 2 réflexes : avis du CSE (ou dispense médicale) et délai d'1 mois pour la reprise du salaire."
+            },
+            {
+                id: "td6-art-6", td: "td6", category: "article",
+                title: "Procédure : Art. L. 1232-2, R. 1232-1, L. 1232-6 & L. 1235-2",
+                content: "1) Convocation (LRAR ou remise en main propre) mentionnant l'objet et le droit à assistance (salarié de l'entreprise ou conseiller du salarié, pas d'avocat) ;\n2) Entretien préalable au moins 5 jours ouvrables après présentation ;\n3) Notification par LRAR au moins 2 jours ouvrables après l'entretien (fixe les limites du litige, précision possible sous 15 jours).",
+                tip: "Délais incontournables : 5 jours ouvrables avant entretien / 2 jours ouvrables après entretien."
+            },
+            {
+                id: "td6-art-7", td: "td6", category: "article",
+                title: "Prescription disciplinaire : Art. L. 1332-4 & L. 1332-2",
+                content: "Aucun fait fautif ne peut donner lieu à lui seul à l'engagement de poursuites disciplinaires au-delà d'un délai de 2 mois à compter du jour où l'employeur en a eu connaissance (L. 1332-4). La sanction ne peut intervenir plus d'1 mois après le jour fixé pour l'entretien préalable (L. 1332-2).",
+                tip: "2 mois pour engager les poursuites / 1 mois après l'entretien pour notifier."
+            },
+            {
+                id: "td6-art-8", td: "td6", category: "article",
+                title: "Suites & Sanctions : Art. L. 1234-1, L. 1235-3, L. 1235-3-1 & L. 1471-1",
+                content: "• Préavis : 1 mois (6m à < 2 ans), 2 mois (>= 2 ans), sauf faute grave/lourde.\n• Indemnité légale : dès 8 mois d'ancienneté (1/4 mois/an jusqu'à 10 ans, 1/3 au-delà).\n• Sanctions : vice de procédure <= 1 mois ; sans CRS = barème Macron (plancher/plafond) ; nullité = réintégration ou indemnité sans plafond (>= 6 mois).\n• Délai de recours : 12 mois (5 ans si discrimination/harcèlement).",
+                tip: "Chiffres clés à connaître par cœur pour conclure un cas pratique."
+            },
+            {
+                id: "td6-prin-1", td: "td6", category: "principe",
+                title: "L'échelle des fautes disciplinaires",
+                content: "• Faute sérieuse : cause réelle et sérieuse simple (préavis et indemnité dus).\n• Faute grave : rend impossible le maintien du salarié dans l'entreprise (ni préavis, ni indemnité ; preuve à la charge de l'employeur).\n• Faute lourde : intention de nuire à l'employeur (idem + engage la responsabilité pécuniaire du salarié).",
+                tip: "La faute grave prive de préavis et d'indemnité de licenciement, mais pas des congés payés acquis."
+            },
+            {
+                id: "td6-prin-2", td: "td6", category: "principe",
+                title: "Insuffisance professionnelle vs Faute & Insuffisance de résultats",
+                content: "L'insuffisance professionnelle est l'incapacité involontaire d'exercer ses fonctions (non disciplinaire, appréciée dans la durée). Si les erreurs traduisent une mauvaise volonté délibérée, le motif redevient fautif. L'insuffisance de résultats exige des objectifs réalistes et une non-atteinte imputable au salarié.",
+                tip: "Ne jamais qualifier l'insuffisance professionnelle de faute !"
+            },
+            {
+                id: "td6-prin-3", td: "td6", category: "principe",
+                title: "Motifs subjectifs interdits & Droit à la preuve",
+                content: "• La perte de confiance ne constitue jamais en soi une cause de licenciement (il faut des faits objectifs). La mésentente suppose des faits objectifs imputables au salarié perturbant l'entreprise.\n• Droit à la preuve : une preuve illicite ou déloyale reste recevable si elle est indispensable à l'exercice du droit à la preuve et strictement proportionnée au but poursuivi.",
+                tip: "Réflexe moderne : vérifier la proportionnalité face à un enregistrement clandestin ou une filature."
+            },
+            {
+                id: "td6-jur-1", td: "td6", category: "jurisprudence",
+                title: "Cass. soc., 17 avr. 1991 & 20 nov. 1991 (n° 89-44.605) — Vie personnelle",
+                content: "Un fait tiré de la vie personnelle du salarié ne peut justifier un licenciement disciplinaire, mais peut fonder un licenciement non disciplinaire s'il cause un trouble objectif caractérisé au fonctionnement de l'entreprise (ex : chauffeur routier perdant son permis pour conduite en état d'ivresse hors temps de travail).",
+                tip: "Distinction essentielle : licenciement non disciplinaire (donc préavis et indemnité dus !)."
+            },
+            {
+                id: "td6-jur-2", td: "td6", category: "jurisprudence",
+                title: "Arrêt Purier (Cass. soc., 1996) — Transaction",
+                content: "Une transaction destinée à régler les conséquences d'un licenciement ne peut être valablement conclue qu'une fois la rupture intervenue et définitive, c'est-à-dire après réception par le salarié de la lettre recommandée de licenciement (et moyennant des concessions réciproques).",
+                tip: "Une transaction signée avant l'envoi de la LRAR est nulle."
+            },
+            {
+                id: "td6-jur-3", td: "td6", category: "jurisprudence",
+                title: "Cass. soc., 27 sept. 2007 (n° 06-43.687) — Définition de la faute grave",
+                content: "La faute grave est celle qui résulte d'un fait ou d'un ensemble de faits imputables au salarié qui constituent une violation des obligations résultant du contrat de travail d'une importance telle qu'elle rend impossible le maintien du salarié dans l'entreprise.",
+                tip: "Définition canonique à recopier dans la majeure d'un cas sur la faute grave."
+            },
+            {
+                id: "td6-jur-4", td: "td6", category: "jurisprudence",
+                title: "Cass. soc., 23 oct. 2007 (n° 06-40.950) — Obligation d'adaptation",
+                content: "L'employeur qui n'a pas assuré l'adaptation du salarié à son poste de travail ni sa formation (art. L. 6321-1) ne peut pas lui reprocher son insuffisance professionnelle pour le licencier.",
+                tip: "Moyen de défense redoutable pour le salarié licencié pour incompétence sur un nouveau logiciel/poste."
+            },
+            {
+                id: "td6-jur-5", td: "td6", category: "jurisprudence",
+                title: "Cass. soc., 8 juill. 2020 — Rattachement à la vie professionnelle (Steward Air France)",
+                content: "Un fait commis hors temps et lieu de travail se rattache à la vie professionnelle et justifie un licenciement disciplinaire lorsqu'il méconnaît une obligation découlant du contrat ou utilise la qualité professionnelle (ex : steward commettant un vol dans un hôtel réservé par la compagnie lors d'une escale).",
+                tip: "À opposer à l'arrêt de 1991 : ici, le licenciement est bien disciplinaire."
+            }
+        ];
+
+        // =========================================================================
+        // BANQUE DE QUESTIONS QCM (24 QUESTIONS COUVRANT TD 1 À TD 6)
+        // =========================================================================
+        const QCM_BANK = [
+            {
+                td: "td1",
+                q: "Quel arrêt fondateur définit le lien de subordination par le triple pouvoir de direction, de contrôle et de sanction ?",
+                options: ["Arrêt Labanne (19 déc. 2000)", "Arrêt Société Générale (13 nov. 1996)", "Arrêt Uber (4 mars 2020)", "Arrêt Purier (1996)"],
+                answer: 1,
+                explanation: "L'arrêt Société Générale du 13 novembre 1996 pose la définition classique du lien de subordination (pouvoirs de direction, contrôle et sanction)."
+            },
+            {
+                td: "td1",
+                q: "Que signifie la présomption de non-salariat prévue à l'article L. 8221-6 du Code du travail ?",
+                options: [
+                    "Un travailleur immatriculé ne peut jamais être requalifié en salarié.",
+                    "C'est une présomption simple : le travailleur est présumé indépendant mais peut prouver un lien de subordination permanent.",
+                    "C'est à l'entreprise donneuse d'ordre de prouver qu'il n'y a pas de subordination.",
+                    "Elle s'applique uniquement aux chauffeurs VTC."
+                ],
+                answer: 1,
+                explanation: "L'article L. 8221-6 instaure une présomption simple de non-salariat ; la charge de la preuve du lien de subordination pèse sur celui qui demande la requalification."
+            },
+            {
+                td: "td1",
+                q: "Quel principe consacre l'arrêt Labanne du 19 décembre 2000 ?",
+                options: [
+                    "L'indisponibilité de la qualification du contrat de travail",
+                    "Le droit au mensonge du candidat",
+                    "La déduction du CDD sur la période d'essai",
+                    "L'interdiction de la perte de confiance"
+                ],
+                answer: 0,
+                explanation: "Le juge n'est pas lié par l'intitulé donné au contrat par les parties mais examine les conditions de fait dans lesquelles s'exerce l'activité."
+            },
+            {
+                td: "td2",
+                q: "Quelle est la durée maximale (renouvellement compris) de la période d'essai en CDI pour un agent de maîtrise ou technicien ?",
+                options: ["4 mois (2m + 2m)", "6 mois (3m + 3m)", "8 mois (4m + 4m)", "3 mois non renouvelable"],
+                answer: 1,
+                explanation: "Art. L. 1221-19 et L. 1221-21 : Ouvriers/employés = 2m -> 4m ; Agents de maîtrise/techniciens = 3m -> 6m ; Cadres = 4m -> 8m."
+            },
+            {
+                td: "td2",
+                q: "Quel délai de prévenance l'employeur doit-il respecter pour rompre la période d'essai d'un salarié présent depuis 4 mois ?",
+                options: ["24 heures", "48 heures", "2 semaines", "1 mois"],
+                answer: 3,
+                explanation: "Art. L. 1221-25 : après 3 mois de présence, le délai de prévenance de l'employeur est de 1 mois."
+            },
+            {
+                td: "td2",
+                q: "Que se passe-t-il si l'employeur rompt la période d'essai avant son terme mais sans respecter le délai de prévenance ?",
+                options: [
+                    "La rupture est requalifiée en licenciement sans cause réelle et sérieuse.",
+                    "La rupture est nulle.",
+                    "La rupture reste valable, mais l'employeur doit verser une indemnité compensatrice.",
+                    "La période d'essai est automatiquement prolongée de la durée du préavis."
+                ],
+                answer: 2,
+                explanation: "Le délai de prévenance ne prolonge pas l'essai ; son non-respect n'invalide pas la rupture mais ouvre droit à une indemnité compensatrice."
+            },
+            {
+                td: "td2",
+                q: "Une salariée embauchée en CDI après un CDD de 2 mois sur le même poste se voit imposer une période d'essai de 3 mois (agent de maîtrise). Quelle règle s'applique ?",
+                options: [
+                    "La période d'essai de 3 mois est valable s'il y a eu 3 jours d'interruption entre les contrats.",
+                    "La durée du CDD (2 mois) doit être déduite de la période d'essai, réduite à 1 mois max (art. L. 1243-11 & Cass. soc. 9 oct. 2013).",
+                    "Aucune période d'essai n'est jamais possible après un CDD.",
+                    "La déduction ne s'applique que pour les cadres."
+                ],
+                answer: 1,
+                explanation: "Selon l'art. L. 1243-11 et l'arrêt du 9 oct. 2013, la durée du CDD sur le même emploi est déduite de la période d'essai du CDI, peu importe une courte interruption."
+            },
+            {
+                td: "td3",
+                q: "Dans quel délai maximum un CDD écrit doit-il être transmis au salarié après l'embauche ?",
+                options: ["24 heures", "2 jours ouvrables", "5 jours ouvrables", "7 jours calendaires"],
+                answer: 1,
+                explanation: "Art. L. 1242-13 : le contrat de travail est transmis au salarié au plus tard dans les deux jours ouvrables suivant l'embauche."
+            },
+            {
+                td: "td3",
+                q: "Quelle est la durée maximale de la période d'essai pour un CDD conclu pour une durée de 12 mois ?",
+                options: ["2 semaines", "1 mois maximum, non renouvelable", "2 mois renouvelable 1 fois", "3 mois"],
+                answer: 1,
+                explanation: "Art. L. 1242-10 : pour un CDD de plus de 6 mois, la période d'essai est limitée à 1 mois maximum et ne peut pas être renouvelée."
+            },
+            {
+                td: "td3",
+                q: "Quel est le montant minimal de l'indemnité de requalification d'un CDD en CDI prononcée par le juge ?",
+                options: ["15 jours de salaire", "Au moins 1 mois de salaire", "10 % de la rémunération totale", "6 mois de salaire"],
+                answer: 1,
+                explanation: "Art. L. 1245-2 : l'indemnité de requalification ne peut être inférieure à un mois de salaire (en plus des indemnités de rupture sans CRS)."
+            },
+            {
+                td: "td3",
+                q: "Quel est le délai de prévenance légal pour notifier une modification de la répartition des horaires à un salarié à temps partiel ?",
+                options: ["48 heures", "3 jours ouvrés sans accord", "7 jours (réductible à 3 jours par accord collectif)", "15 jours"],
+                answer: 2,
+                explanation: "Le délai légal est de 7 jours avant la date d'effet de la modification (réductible à 3 jours ouvrés par accord collectif avec contreparties)."
+            },
+            {
+                td: "td4",
+                q: "Quelles durées maximales et quels repos s'appliquent à un salarié en forfait annuel en jours (art. L. 3121-62) ?",
+                options: [
+                    "35h par semaine et 10h par jour maximum",
+                    "Aucune durée max quotidienne/hebdo, mais 11h de repos quotidien et 35h de repos hebdomadaire obligatoires",
+                    "48h par semaine maximum et 8h de repos quotidien",
+                    "Aucun repos minimal obligatoire en raison de son autonomie"
+                ],
+                answer: 1,
+                explanation: "L'article L. 3121-62 écarte les durées maximales de travail, mais impose le respect des repos minimaux : 11h par jour et 35h par semaine (24h + 11h)."
+            },
+            {
+                td: "td4",
+                q: "Selon la jurisprudence (20 mars 1980 & 14 nov. 2018), à quelle condition un salarié obtient-il le paiement d'heures supplémentaires ?",
+                options: [
+                    "Dès qu'il prouve être resté tard au bureau",
+                    "Si elles ont été accomplies avec l'accord au moins implicite de l'employeur ou rendues nécessaires par les tâches confiées",
+                    "Uniquement s'il dispose d'un ordre écrit signé avant chaque heure",
+                    "Uniquement s'il est cadre au forfait jours"
+                ],
+                answer: 1,
+                explanation: "Il faut démontrer soit l'accord (au moins implicite) de l'employeur, soit que la charge de travail rendait ces heures nécessaires (contrairement au choix personnel de traiter ses mails le soir, arrêt du 25 mars 2026)."
+            },
+            {
+                td: "td4",
+                q: "Quel arrêt admet que l'expérience professionnelle acquise chez un précédent employeur justifie une différence de salaire ?",
+                options: ["Cass. soc., 15 nov. 2006", "Cass. soc., 7 avr. 2004", "Cass. soc., 13 nov. 1996", "Arrêt Purier (1996)"],
+                answer: 0,
+                explanation: "Cass. soc., 15 nov. 2006 reconnaît l'expérience acquise dans d'autres relations contractuelles comme critère objectif, tout comme l'urgence du recrutement (21 juin 2005)."
+            },
+            {
+                td: "td5",
+                q: "Quelle est la solution de l'arrêt Cass. soc. du 7 avril 2004 concernant le passage d'un horaire de jour à un horaire de nuit ?",
+                options: [
+                    "C'est un simple changement des conditions de travail si le contrat le prévoit.",
+                    "C'est toujours une modification du contrat de travail nécessitant l'accord exprès du salarié.",
+                    "C'est possible sans accord pour les cadres uniquement.",
+                    "C'est possible moyennant un préavis de 7 jours."
+                ],
+                answer: 1,
+                explanation: "Le passage, même partiel, d'un horaire de jour à un horaire de nuit (ou inversement) constitue toujours une modification du contrat de travail exigeant l'accord du salarié."
+            },
+            {
+                td: "td5",
+                q: "À quelle condition l'employeur peut-il imposer un déplacement occasionnel hors du secteur géographique sans clause de mobilité (Cass. soc., 22 janv. 2003) ?",
+                options: [
+                    "Jamais sans l'accord écrit du salarié",
+                    "Si la mission temporaire est justifiée par l'intérêt de l'entreprise et que la spécificité des fonctions l'implique",
+                    "Uniquement si la distance est inférieure à 50 km",
+                    "Uniquement en cas de force majeure"
+                ],
+                answer: 1,
+                explanation: "Cass. soc., 22 janv. 2003 autorise le déplacement occasionnel hors secteur s'il répond à l'intérêt de l'entreprise et correspond à la spécificité des fonctions."
+            },
+            {
+                td: "td5",
+                q: "Le retrait d'une délégation de signature à un salarié constitue-t-il une modification du contrat de travail ?",
+                options: [
+                    "Non, c'est un acte de gestion courant.",
+                    "Oui, cela nécessite l'accord du salarié (Cass. soc., 26 oct. 2011).",
+                    "Non, tant que son salaire n'est pas diminué.",
+                    "Oui, uniquement s'il a plus de 5 ans d'ancienneté."
+                ],
+                answer: 1,
+                explanation: "Cass. soc., 26 oct. 2011 juge que le retrait d'une délégation de signature modifie les responsabilités essentielles et exige l'accord du salarié."
+            },
+            {
+                td: "td6",
+                q: "Quels sont les délais légaux de procédure pour un licenciement pour motif personnel ?",
+                options: [
+                    "2 jours ouvrables avant l'entretien et 5 jours après",
+                    "Au moins 5 jours ouvrables avant l'entretien, puis envoi de la lettre au moins 2 jours ouvrables après l'entretien",
+                    "7 jours avant l'entretien et 7 jours après",
+                    "3 jours ouvrables avant l'entretien et 24 heures après"
+                ],
+                answer: 1,
+                explanation: "Art. L. 1232-2 et L. 1232-6 : minimum 5 jours ouvrables entre la présentation de la convocation et l'entretien ; minimum 2 jours ouvrables entre l'entretien et l'expédition de la LRAR."
+            },
+            {
+                td: "td6",
+                q: "Un chauffeur routier perd son permis de conduire suite à une infraction commise le week-end avec son véhicule personnel. Quel licenciement est possible ?",
+                options: [
+                    "Aucun licenciement n'est possible (vie privée).",
+                    "Un licenciement pour faute lourde.",
+                    "Un licenciement non disciplinaire fondé sur le trouble objectif causé au fonctionnement de l'entreprise (Cass. soc., 20 nov. 1991).",
+                    "Un licenciement pour faute grave sans préavis."
+                ],
+                answer: 2,
+                explanation: "Cass. soc., 20 nov. 1991 (n° 89-44.605) : ce n'est pas une faute disciplinaire, mais l'impossibilité d'exécuter sa prestation crée un trouble objectif justifiant un licenciement non disciplinaire (avec préavis et indemnité)."
+            },
+            {
+                td: "td6",
+                q: "Quel est le délai de prescription disciplinaire pour engager des poursuites à compter de la connaissance des faits fautifs (art. L. 1332-4) ?",
+                options: ["1 mois", "2 mois", "6 mois", "12 mois"],
+                answer: 1,
+                explanation: "Art. L. 1332-4 : l'employeur dispose de 2 mois à compter de sa connaissance exacte des faits pour engager la procédure (et 1 mois après l'entretien pour notifier la sanction, art. L. 1332-2)."
+            },
+            {
+                td: "td6",
+                q: "En matière d'inaptitude médicale, que doit faire l'employeur s'il n'a ni reclassé ni licencié le salarié à l'issue d'un délai d'1 mois (art. L. 1226-4) ?",
+                options: [
+                    "Le contrat est automatiquement rompu.",
+                    "Il doit reprendre le versement du salaire correspondant à l'emploi occupé avant la suspension.",
+                    "Il bénéficie d'un second mois gratuit.",
+                    "Le salarié est considéré comme démissionnaire."
+                ],
+                answer: 1,
+                explanation: "Art. L. 1226-4 et L. 1226-11 : passé le délai d'1 mois après l'examen médical de reprise, l'employeur doit reprendre le paiement du salaire tant que le reclassement ou le licenciement n'est pas prononcé."
+            }
+        ];
+
+        // =========================================================================
+        // BANQUE DE MINI-CAS PRATIQUES (SYLLOGISMES EXAMEN)
+        // =========================================================================
+        const CAS_PRATIQUES = [
+            {
+                td: "TD 1 • Qualification",
+                enonce: "M. Balle est engagé comme recruteur sportif via un contrat de prestation de services (statut indépendant). Il doit respecter des horaires imposés au club, assister obligatoirement aux réunions, rendre des comptes hebdomadaires et encourt des sanctions financières en cas de retard. Peut-il obtenir la requalification en contrat de travail ?",
+                probleme: "Dans quelle mesure un travailleur indépendant immatriculé peut-il obtenir la requalification de sa convention de prestation de services en contrat de travail ?",
+                regle: "Aux termes des articles L. 1221-1 et L. 8221-6 du Code du travail, le travailleur immatriculé bénéficie d'une présomption simple de non-salariat. Toutefois, en vertu du principe d'indisponibilité de la qualification (Cass. soc., 19 déc. 2000, Labanne), le juge analyse les conditions de fait d'exécution. Le contrat de travail est caractérisé par une prestation, une rémunération et un lien de subordination (Cass. soc., 13 nov. 1996, Société Générale : pouvoirs de direction, contrôle et sanction).",
+                conclusion: "Oui. En l'espèce, M. Balle exerce une prestation rémunérée sous le triple pouvoir du club : direction (horaires et réunions obligatoires), contrôle (comptes rendus) et sanction. La présomption de non-salariat est renversée : il peut saisir le Conseil de prud'hommes pour obtenir la requalification en CDI."
+            },
+            {
+                td: "TD 2 • Période d'essai & CDD",
+                enonce: "Mme Penne a travaillé 2 mois en CDD comme assistante de gestion (agent de maîtrise). À l'issue de son CDD (après 3 jours de pause), l'employeur lui propose un CDI sur le même poste avec une période d'essai de 3 mois renouvelable 1 fois. Mme Penne refuse. Son refus est-il justifié ?",
+                probleme: "L'employeur peut-il imposer une période d'essai de 3 mois renouvelable dans un CDI conclu immédiatement après un CDD sur le même poste ?",
+                regle: "Selon les articles L. 1221-19 et L. 1221-21, la période d'essai maximale d'un agent de maîtrise est de 3 mois (6 mois renouvelée). Cependant, l'article L. 1243-11 (dernier alinéa) et la Cour de cassation (Cass. soc., 9 oct. 2013) imposent de déduire la durée du ou des CDD antérieurs exercés sur le même emploi, peu importe une courte interruption.",
+                conclusion: "Le refus de Mme Penne est fondé sur l'absence de déduction de son CDD : les 2 mois déjà effectués doivent être déduits des 3 mois initiaux, limitant la période d'essai initiale à 1 mois maximum."
+            },
+            {
+                td: "TD 2 • Renouvellement & Rupture essai",
+                enonce: "M. Farfalle (employé) est embauché le 1er juin avec une période d'essai de 2 mois (fin le 31 juillet). Le 25 juillet, l'employeur lui envoie une LRAR pour l'informer du renouvellement de l'essai pour 2 mois supplémentaires. M. Farfalle ne répond rien. Le 25 septembre, l'employeur rompt l'essai avec effet immédiat. Que vaut cette rupture ?",
+                probleme: "La rupture notifiée le 25 septembre s'analyse-t-elle en une rupture valable de période d'essai ou en un licenciement sans cause réelle et sérieuse ?",
+                regle: "Selon une jurisprudence constante de la Cour de cassation, le renouvellement de la période d'essai exige trois conditions cumulatives : être prévu par accord de branche étendu, être stipulé au contrat et recueillir l'accord exprès et non équivoque du salarié avant le terme initial. Une simple lettre d'information unilatérale est sans effet.",
+                conclusion: "Faute d'accord exprès de M. Farfalle avant le 31 juillet, le renouvellement est nul et la période d'essai a pris fin le 31 juillet. La rupture du 25 septembre intervient hors période d'essai : elle constitue un licenciement sans cause réelle et sérieuse. (À titre subsidiaire, même si l'accord avait existé, un délai de prévenance d'1 mois aurait été dû au-delà de 3 mois de présence, art. L. 1221-25)."
+            },
+            {
+                td: "TD 3 • CDD successifs",
+                enonce: "Mme Soie a signé 22 CDD de remplacement successifs sur une période de 14 mois pour occuper un poste d'agent d'entretien dans une PME de 30 salariés. L'employeur soutient que chaque contrat était autonome et mentionnait le nom d'un salarié absent. Peut-elle obtenir la requalification ?",
+                probleme: "La conclusion de nombreux CDD de remplacement successifs avec le même salarié sur une longue période peut-elle être requalifiée en CDI ?",
+                regle: "Si l'article L. 1244-1 autorise la succession de CDD de remplacement sans délai de carence, l'article L. 1242-1 interdit qu'un CDD ait pour objet ou pour effet de pourvoir durablement un emploi lié à l'activité normale et permanente. Selon la Cour de cassation (29 sept. 2004 ; 26 janv. 2005) et la CJUE (arrêt Kücük, 26 janv. 2012), le juge apprécie globalement la succession pour déceler un besoin structurel.",
+                conclusion: "Oui. 22 contrats en 14 mois dans une petite structure révèlent un besoin structurel et permanent de main-d'œuvre. Mme Soie peut obtenir la requalification en CDI dès le 1er contrat ainsi qu'une indemnité d'au moins 1 mois de salaire (art. L. 1245-2)."
+            },
+            {
+                td: "TD 4 • Forfait jours & Heures sup",
+                enonce: "Hervé, cadre au forfait annuel de 218 jours, effectue régulièrement des journées de 8h à 21h30 sans aucun entretien annuel ni suivi de sa charge par son employeur. Par ailleurs, sa collègue Arlette (35h) réclame le paiement d'1h par soir passée volontairement à trier ses mails chez elle pour s'alléger la matinée. Quelles sont leurs chances respectives ?",
+                probleme: "1) Quelle est la sanction du défaut de contrôle de la charge de travail d'un salarié en forfait jours ? 2) Un salarié peut-il obtenir le paiement d'heures supplémentaires accomplies de sa propre initiative le soir ?",
+                regle: "1) En vertu des articles L. 3121-62 et L. 3121-64, le salarié en forfait jours doit impérativement bénéficier de 11h de repos quotidien et l'employeur doit contrôler sa charge de travail via un entretien annuel.\n2) Selon la jurisprudence (Cass. soc., 20 mars 1980 ; 14 nov. 2018 ; arrêt du 25 mars 2026), les heures supplémentaires ne sont dues que si elles ont été accomplies avec l'accord au moins implicite de l'employeur ou rendues nécessaires par les tâches confiées.",
+                conclusion: "1) Hervé ne respecte pas le repos minimal quotidien de 11h (seulement 10h30 entre 21h30 et 8h) et l'employeur manque à son obligation de suivi : Hervé peut obtenir des dommages-intérêts (voire la privation d'effet du forfait).\n2) Arlette verra sa demande rejetée : le traitement de mails le soir relève de sa convenance personnelle et n'était ni demandé ni nécessaire."
+            },
+            {
+                td: "TD 5 • Horaire de nuit & Secteur",
+                enonce: "Un employeur souhaite faire passer deux salariés à temps complet d'un horaire de jour à un horaire de nuit en s'appuyant sur une clause de variation d'horaires inscrite dans leur contrat. Par ailleurs, il impose à un responsable technique un déplacement temporaire de 10 jours dans une autre région sans clause de mobilité.",
+                probleme: "L'employeur peut-il imposer un passage en horaire de nuit en vertu d'une clause contractuelle, ainsi qu'un déplacement occasionnel hors secteur géographique sans clause de mobilité ?",
+                regle: "1) Selon Cass. soc. du 7 avril 2004, le passage (même partiel) d'un horaire de jour à un horaire de nuit constitue toujours une modification du contrat de travail nécessitant l'accord exprès du salarié, nonobstant toute clause contraire.\n2) Selon Cass. soc. du 22 janvier 2003, un déplacement occasionnel hors secteur géographique peut être imposé sans clause de mobilité s'il est justifié par l'intérêt de l'entreprise et correspond à la spécificité des fonctions.",
+                conclusion: "1) L'employeur ne peut pas imposer le travail de nuit sans l'accord exprès des deux salariés.\n2) En revanche, le déplacement temporaire de 10 jours du responsable technique relève du pouvoir de direction et s'impose à lui."
+            },
+            {
+                td: "TD 6 • Vie personnelle vs Vie pro",
+                enonce: "Un steward de la compagnie Air France commet un vol dans un hôtel réservé par la compagnie lors d'une escale à l'étranger, en dehors de ses heures de service. L'employeur souhaite le licencier pour faute grave. Le salarié invoque le respect de sa vie privée.",
+                probleme: "Un fait commis hors temps de travail peut-il justifier un licenciement disciplinaire pour faute grave ?",
+                regle: "En principe, un fait tiré de la vie personnelle ne peut fonder un licenciement disciplinaire (Cass. soc., 17 avr. 1991). Toutefois, selon Cass. soc. du 8 juillet 2020, le fait se rattache à la vie professionnelle et justifie un licenciement disciplinaire s'il méconnaît une obligation découlant du contrat ou utilise la qualité professionnelle du salarié. La faute grave rend impossible le maintien dans l'entreprise (Cass. soc., 27 sept. 2007).",
+                conclusion: "Oui. Le steward ayant accédé à l'hôtel grâce à ses fonctions au sein d'Air France, le vol se rattache à sa vie professionnelle, porte atteinte à l'image de la compagnie et rend impossible son maintien dans l'entreprise : le licenciement disciplinaire pour faute grave (privatif de préavis et d'indemnité) est justifié."
+            },
+            {
+                td: "TD 6 • Transaction & Procédure",
+                enonce: "À l'issue d'un entretien préalable tenu le mardi 10 novembre, l'employeur remet en main propre la lettre de licenciement le mercredi 11 novembre et fait signer au salarié le jour même une transaction lui accordant une indemnité forfaitaire contre renonciation à tout recours. Cette transaction est-elle valable ?",
+                probleme: "Une transaction conclue le lendemain de l'entretien préalable par remise en main propre de la lettre de licenciement est-elle valable ?",
+                regle: "D'une part, l'article L. 1232-6 impose d'expédier la lettre de licenciement par LRAR au moins 2 jours ouvrables après l'entretien préalable. D'autre part, selon l'arrêt Purier (Cass. soc., 1996), une transaction ne peut être valablement conclue qu'après la notification officielle et définitive du licenciement par lettre recommandée avec accusé de réception.",
+                conclusion: "La transaction est nulle : d'une part le délai légal de réflexion de 2 jours ouvrables n'a pas été respecté, et d'autre part la transaction a été signée en l'absence d'envoi préalable de la LRAR de licenciement."
+            }
+        ];
+
+        // =========================================================================
+        // ÉTAT DE L'APPLICATION & SAUVEGARDE LOCALSTORAGE
+        // =========================================================================
+        let state = {
+            currentTd: 'all',
+            currentMode: 'fiches',
+            searchQuery: '',
+            categoryFilter: 'all',
+            blurAnswers: false,
+            masteredIds: JSON.parse(localStorage.getItem('droit_travail_mastered') || '[]'),
+            // Flashcards state
+            fcIndex: 0,
+            fcFlipped: false,
+            // QCM state
+            qcmQuestions: [],
+            qcmCurrent: 0,
+            qcmScore: 0,
+            qcmAnswered: false,
+            qcmHistory: [],
+            qcmSeconds: 0,
+            qcmTimerInterval: null,
+            // Cas pratiques state
+            casIndex: 0
+        };
+
+        function saveMastered() {
+            localStorage.setItem('droit_travail_mastered', JSON.stringify(state.masteredIds));
+            updateProgressUI();
+        }
+
+        // =========================================================================
+        // INITIALISATION & NAVIGATION
+        // =========================================================================
+        function init() {
+            renderTdTabs();
+            updateProgressUI();
+            renderFiches();
+            setupEventListeners();
+        }
+
+        function renderTdTabs() {
+            const nav = document.getElementById('td-tabs');
+            nav.innerHTML = Object.entries(TD_META).map(([key, meta]) => {
+                const isActive = state.currentTd === key;
+                const count = key === 'all'
+                    ? KNOWLEDGE_ITEMS.length
+                    : KNOWLEDGE_ITEMS.filter(i => i.td === key).length;
+                const masteredCount = key === 'all'
+                    ? state.masteredIds.length
+                    : KNOWLEDGE_ITEMS.filter(i => i.td === key && state.masteredIds.includes(i.id)).length;
+
+                return `
+                    <button onclick="selectTd('${key}')" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all flex items-center gap-2 border ${
+                        isActive
+                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/20'
+                        : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-transparent hover:bg-slate-200 dark:hover:bg-slate-800'
+                    }">
+                        <span>${meta.label}</span>
+                        <span class="font-mono text-[11px] px-1.5 py-0.5 rounded-md ${
+                            isActive ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                        }">${masteredCount}/${count}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function selectTd(tdKey) {
+            state.currentTd = tdKey;
+            state.fcIndex = 0;
+            state.fcFlipped = false;
+            renderTdTabs();
+            updateProgressUI();
+            if (state.currentMode === 'fiches') renderFiches();
+            if (state.currentMode === 'flashcards') renderFlashcard();
+            if (state.currentMode === 'qcm') resetQCM();
+        }
+
+        function switchMode(mode) {
+            state.currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                const active = btn.dataset.mode === mode;
+                btn.className = active
+                    ? 'mode-btn px-3.5 py-2 rounded-lg text-sm font-semibold transition-all bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-sm flex items-center gap-2 whitespace-nowrap'
+                    : 'mode-btn px-3.5 py-2 rounded-lg text-sm font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-2 whitespace-nowrap';
+            });
+
+            document.getElementById('fiches-controls').classList.toggle('hidden', mode !== 'fiches');
+            document.getElementById('view-fiches').classList.toggle('hidden', mode !== 'fiches');
+            document.getElementById('view-flashcards').classList.toggle('hidden', mode !== 'flashcards');
+            document.getElementById('view-qcm').classList.toggle('hidden', mode !== 'qcm');
+            document.getElementById('view-cas').classList.toggle('hidden', mode !== 'cas');
+
+            if (mode === 'fiches') renderFiches();
+            if (mode === 'flashcards') renderFlashcard();
+            if (mode === 'cas') renderCasPratique();
+        }
+
+        function updateProgressUI() {
+            const total = KNOWLEDGE_ITEMS.length;
+            const mastered = state.masteredIds.length;
+            const pct = total > 0 ? Math.round((mastered / total) * 100) : 0;
+
+            document.getElementById('global-progress-text').textContent = `${pct}% (${mastered}/${total})`;
+            document.getElementById('global-progress-bar').style.width = `${pct}%`;
+
+            const sectionItems = state.currentTd === 'all'
+                ? KNOWLEDGE_ITEMS
+                : KNOWLEDGE_ITEMS.filter(i => i.td === state.currentTd);
+            const sectionMastered = sectionItems.filter(i => state.masteredIds.includes(i.id)).length;
+            const sectionPct = sectionItems.length > 0 ? Math.round((sectionMastered / sectionItems.length) * 100) : 0;
+
+            document.getElementById('section-progress-bar').style.width = `${sectionPct}%`;
+            document.getElementById('section-progress-text').textContent = `${sectionPct}%`;
+        }
+
+        // =========================================================================
+        // MODE 1 : FICHES DE SYNTHÈSE
+        // =========================================================================
+        function getCategoryBadge(cat) {
+            if (cat === 'article') {
+                return `<span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">📘 Article</span>`;
+            }
+            if (cat === 'jurisprudence') {
+                return `<span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">⚖️ Jurisprudence</span>`;
+            }
+            return `<span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">💡 Principe</span>`;
+        }
+
+        function renderFiches() {
+            const meta = TD_META[state.currentTd];
+            document.getElementById('td-badge').textContent = state.currentTd === 'all' ? 'Programme complet' : state.currentTd.toUpperCase();
+            document.getElementById('td-title').textContent = meta.title;
+            document.getElementById('td-subtitle').textContent = meta.subtitle;
+
+            const query = state.searchQuery.toLowerCase().trim();
+            const filtered = KNOWLEDGE_ITEMS.filter(item => {
+                const matchTd = state.currentTd === 'all' || item.td === state.currentTd;
+                const matchCat = state.categoryFilter === 'all' || item.category === state.categoryFilter;
+                const matchSearch = !query ||
+                    item.title.toLowerCase().includes(query) ||
+                    item.content.toLowerCase().includes(query) ||
+                    (item.tip && item.tip.toLowerCase().includes(query));
+                return matchTd && matchCat && matchSearch;
+            });
+
+            document.getElementById('td-items-count').textContent = `${filtered.length} notion(s) affichée(s)`;
+
+            const grid = document.getElementById('cards-grid');
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+                        <p class="text-slate-500 font-medium">Aucune notion ne correspond à votre recherche.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(item => {
+                const isMastered = state.masteredIds.includes(item.id);
+                return `
+                    <article class="rounded-2xl bg-white dark:bg-slate-900 border ${isMastered ? 'border-emerald-500/50 dark:border-emerald-500/40' : 'border-slate-200 dark:border-slate-800'} p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-3">
+                                ${getCategoryBadge(item.category)}
+                                <span class="text-[11px] font-mono font-bold uppercase text-slate-400">${item.td.toUpperCase()}</span>
+                            </div>
+                            <h3 class="font-mono font-bold text-base text-slate-900 dark:text-white mb-2.5 leading-snug">${item.title}</h3>
+                            <div onclick="this.classList.toggle('revealed')" class="${state.blurAnswers ? 'blur-answer cursor-pointer' : ''} space-y-2.5">
+                                <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">${item.content}</p>
+                                ${item.tip ? `
+                                    <div class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-xs text-slate-600 dark:text-slate-400 flex items-start gap-2">
+                                        <span>🎯</span>
+                                        <span>${item.tip}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                            <span class="text-xs text-slate-400">${state.blurAnswers ? 'Cliquez/survolez pour voir' : ''}</span>
+                            <button onclick="toggleMastered('${item.id}')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 ${
+                                isMastered
+                                ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/25'
+                                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950 dark:hover:text-indigo-400'
+                            }">
+                                <span>${isMastered ? '✅ Maîtrisé' : '○ Marquer maîtrisé'}</span>
+                            </button>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        function toggleMastered(id) {
+            if (state.masteredIds.includes(id)) {
+                state.masteredIds = state.masteredIds.filter(item => item !== id);
+            } else {
+                state.masteredIds.push(id);
+            }
+            saveMastered();
+            renderTdTabs();
+            renderFiches();
+        }
+
+        // =========================================================================
+        // MODE 2 : FLASHCARDS INTERACTIVES
+        // =========================================================================
+        function getFilteredFlashcards() {
+            const typeFilter = document.getElementById('fc-type-filter').value;
+            const onlyUnmastered = document.getElementById('fc-only-unmastered').checked;
+
+            return KNOWLEDGE_ITEMS.filter(item => {
+                const matchTd = state.currentTd === 'all' || item.td === state.currentTd;
+                const matchType = typeFilter === 'all' || item.category === typeFilter;
+                const matchMastered = !onlyUnmastered || !state.masteredIds.includes(item.id);
+                return matchTd && matchType && matchMastered;
+            });
+        }
+
+        function renderFlashcard() {
+            const cards = getFilteredFlashcards();
+            const inner = document.getElementById('flashcard-inner');
+            inner.classList.remove('rotate-y-180');
+            state.fcFlipped = false;
+
+            if (cards.length === 0) {
+                document.getElementById('fc-counter').textContent = '0 / 0';
+                document.getElementById('fc-front-td').textContent = 'Bravo !';
+                document.getElementById('fc-front-badge').textContent = 'Terminé';
+                document.getElementById('fc-front-title').textContent = 'Toutes les cartes de cette sélection sont acquises !';
+                document.getElementById('fc-back-title').textContent = 'Félicitations';
+                document.getElementById('fc-back-content').textContent = 'Décochez « Uniquement À revoir » ou changez de TD pour continuer.';
+                document.getElementById('fc-back-tip').classList.add('hidden');
+                return;
+            }
+
+            if (state.fcIndex >= cards.length) state.fcIndex = 0;
+            if (state.fcIndex < 0) state.fcIndex = cards.length - 1;
+
+            const card = cards[state.fcIndex];
+            const isMastered = state.masteredIds.includes(card.id);
+
+            document.getElementById('fc-counter').textContent = `${state.fcIndex + 1} / ${cards.length}`;
+            document.getElementById('fc-front-td').textContent = card.td.toUpperCase();
+            document.getElementById('fc-front-badge').textContent =
+                card.category === 'article' ? '📘 Article' : (card.category === 'jurisprudence' ? '⚖️ Jurisprudence' : '💡 Principe');
+            document.getElementById('fc-front-title').textContent = card.title;
+
+            document.getElementById('fc-back-title').textContent = card.title;
+            document.getElementById('fc-back-status').textContent = isMastered ? '✅ Acquis' : '🔄 À revoir';
+            document.getElementById('fc-back-content').textContent = card.content;
+
+            const tipEl = document.getElementById('fc-back-tip');
+            if (card.tip) {
+                tipEl.textContent = `🎯 Réflexe examen : ${card.tip}`;
+                tipEl.classList.remove('hidden');
+            } else {
+                tipEl.classList.add('hidden');
+            }
+        }
+
+        function flipFlashcard() {
+            state.fcFlipped = !state.fcFlipped;
+            document.getElementById('flashcard-inner').classList.toggle('rotate-y-180', state.fcFlipped);
+        }
+
+        // =========================================================================
+        // MODE 3 : QCM CHRONOMÉTRÉ
+        // =========================================================================
+        function startQCM(count) {
+            let pool = state.currentTd === 'all'
+                ? [...QCM_BANK]
+                : QCM_BANK.filter(q => q.td === state.currentTd);
+
+            // Compléter avec d'autres questions si un TD seul a moins de questions que demandé
+            if (pool.length < count) {
+                const others = QCM_BANK.filter(q => q.td !== state.currentTd).sort(() => Math.random() - 0.5);
+                pool = [...pool, ...others];
+            }
+
+            state.qcmQuestions = pool.sort(() => Math.random() - 0.5).slice(0, Math.min(count, pool.length));
+            state.qcmCurrent = 0;
+            state.qcmScore = 0;
+            state.qcmHistory = [];
+            state.qcmSeconds = 0;
+
+            document.getElementById('qcm-setup').classList.add('hidden');
+            document.getElementById('qcm-results').classList.add('hidden');
+            document.getElementById('qcm-active').classList.remove('hidden');
+
+            clearInterval(state.qcmTimerInterval);
+            state.qcmTimerInterval = setInterval(() => {
+                state.qcmSeconds++;
+                const mins = String(Math.floor(state.qcmSeconds / 60)).padStart(2, '0');
+                const secs = String(state.qcmSeconds % 60).padStart(2, '0');
+                document.getElementById('qcm-timer').textContent = `${mins}:${secs}`;
+            }, 1000);
+
+            renderQCMQuestion();
+        }
+
+        function renderQCMQuestion() {
+            state.qcmAnswered = false;
+            const q = state.qcmQuestions[state.qcmCurrent];
+            const total = state.qcmQuestions.length;
+
+            document.getElementById('qcm-progress-label').textContent = `Question ${state.qcmCurrent + 1} / ${total}`;
+            document.getElementById('qcm-td-tag').textContent = q.td.toUpperCase();
+            document.getElementById('qcm-score-live').textContent = `Score : ${state.qcmScore}`;
+            document.getElementById('qcm-question-text').textContent = q.q;
+            document.getElementById('qcm-feedback').classList.add('hidden');
+            document.getElementById('qcm-next-btn').classList.add('hidden');
+
+            const optionsEl = document.getElementById('qcm-options');
+            optionsEl.innerHTML = q.options.map((opt, idx) => `
+                <button onclick="selectQCMOption(${idx})" id="qcm-opt-${idx}" class="w-full text-left p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 hover:border-indigo-500 transition-all text-sm font-medium flex items-start gap-3">
+                    <span class="w-6 h-6 rounded-lg bg-slate-200 dark:bg-slate-800 flex items-center justify-center font-mono text-xs font-bold shrink-0">${String.fromCharCode(65 + idx)}</span>
+                    <span>${opt}</span>
+                </button>
+            `).join('');
+        }
+
+        function selectQCMOption(selectedIndex) {
+            if (state.qcmAnswered) return;
+            state.qcmAnswered = true;
+
+            const q = state.qcmQuestions[state.qcmCurrent];
+            const isCorrect = selectedIndex === q.answer;
+            if (isCorrect) state.qcmScore++;
+
+            state.qcmHistory.push({ q, selectedIndex, isCorrect });
+            document.getElementById('qcm-score-live').textContent = `Score : ${state.qcmScore}`;
+
+            q.options.forEach((_, idx) => {
+                const btn = document.getElementById(`qcm-opt-${idx}`);
+                btn.disabled = true;
+                if (idx === q.answer) {
+                    btn.className = "w-full text-left p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-sm font-bold flex items-start gap-3";
+                } else if (idx === selectedIndex && !isCorrect) {
+                    btn.className = "w-full text-left p-4 rounded-2xl border-2 border-rose-500 bg-rose-500/10 text-rose-700 dark:text-rose-300 text-sm font-bold flex items-start gap-3";
+                } else {
+                    btn.className = "w-full text-left p-4 rounded-2xl border border-slate-200 dark:border-slate-800 opacity-50 text-sm flex items-start gap-3";
+                }
+            });
+
+            const fb = document.getElementById('qcm-feedback');
+            fb.className = `p-4 rounded-2xl text-sm leading-relaxed border ${
+                isCorrect
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-800 dark:text-emerald-200'
+                : 'bg-rose-500/10 border-rose-500/30 text-rose-800 dark:text-rose-200'
+            }`;
+            fb.innerHTML = `<strong>${isCorrect ? '✅ Bonne réponse !' : '❌ Réponse incorrecte.'}</strong> ${q.explanation}`;
+            fb.classList.remove('hidden');
+
+            const nextBtn = document.getElementById('qcm-next-btn');
+            nextBtn.textContent = state.qcmCurrent + 1 < state.qcmQuestions.length ? 'Question suivante →' : 'Voir mon résultat 🏆';
+            nextBtn.classList.remove('hidden');
+        }
+
+        function finishQCM() {
+            clearInterval(state.qcmTimerInterval);
+            document.getElementById('qcm-active').classList.add('hidden');
+            document.getElementById('qcm-results').classList.remove('hidden');
+
+            const total = state.qcmQuestions.length;
+            const ratio = state.qcmScore / total;
+            document.getElementById('qcm-result-emoji').textContent = ratio >= 0.8 ? '🏆' : (ratio >= 0.5 ? '👍' : '📚');
+            document.getElementById('qcm-final-score').textContent = `${state.qcmScore} / ${total} (${Math.round(ratio * 100)}%)`;
+
+            const mins = String(Math.floor(state.qcmSeconds / 60)).padStart(2, '0');
+            const secs = String(state.qcmSeconds % 60).padStart(2, '0');
+            document.getElementById('qcm-final-time').textContent = `Temps écoulé : ${mins}:${secs}`;
+
+            const reviewList = document.getElementById('qcm-review-list');
+            reviewList.innerHTML = state.qcmHistory.map((item, idx) => `
+                <div class="p-3.5 rounded-xl border ${item.isCorrect ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-rose-500/30 bg-rose-500/5'} text-xs space-y-1">
+                    <div class="font-bold">${idx + 1}. ${item.q.q}</div>
+                    <div class="${item.isCorrect ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">
+                        Votre réponse : ${item.q.options[item.selectedIndex]} ${item.isCorrect ? '✅' : `❌ (Attendu : ${item.q.options[item.q.answer]})`}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function resetQCM() {
+            clearInterval(state.qcmTimerInterval);
+            document.getElementById('qcm-active').classList.add('hidden');
+            document.getElementById('qcm-results').classList.add('hidden');
+            document.getElementById('qcm-setup').classList.remove('hidden');
+        }
+
+        // =========================================================================
+        // MODE 4 : RÉFLEXES CAS PRATIQUES
+        // =========================================================================
+        function renderCasPratique() {
+            const total = CAS_PRATIQUES.length;
+            if (state.casIndex >= total) state.casIndex = 0;
+            if (state.casIndex < 0) state.casIndex = total - 1;
+
+            const cas = CAS_PRATIQUES[state.casIndex];
+            document.getElementById('cas-counter').textContent = `${state.casIndex + 1} / ${total}`;
+            document.getElementById('cas-td-badge').textContent = cas.td;
+            document.getElementById('cas-enonce').textContent = cas.enonce;
+            document.getElementById('cas-user-notes').value = '';
+            document.getElementById('cas-solution').classList.add('hidden');
+            document.getElementById('cas-reveal-btn').classList.remove('hidden');
+
+            document.getElementById('cas-sol-probleme').textContent = cas.probleme;
+            document.getElementById('cas-sol-regle').textContent = cas.regle;
+            document.getElementById('cas-sol-conclusion').textContent = cas.conclusion;
+        }
+
+        // =========================================================================
+        // ÉCOUTEURS D'ÉVÉNEMENTS
+        // =========================================================================
+        function setupEventListeners() {
+            // Changement de mode
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.addEventListener('click', () => switchMode(btn.dataset.mode));
+            });
+
+            // Recherche et filtre fiches
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                state.searchQuery = e.target.value;
+                renderFiches();
+            });
+            document.getElementById('category-filter').addEventListener('change', (e) => {
+                state.categoryFilter = e.target.value;
+                renderFiches();
+            });
+
+            // Bouton floutage auto-test
+            document.getElementById('toggle-blur-btn').addEventListener('click', () => {
+                state.blurAnswers = !state.blurAnswers;
+                document.getElementById('blur-btn-label').textContent = state.blurAnswers ? 'Afficher les réponses' : 'Flouter les réponses';
+                renderFiches();
+            });
+
+            // Flashcards interactions
+            document.getElementById('flashcard-container').addEventListener('click', flipFlashcard);
+            document.getElementById('fc-type-filter').addEventListener('change', () => { state.fcIndex = 0; renderFlashcard(); });
+            document.getElementById('fc-only-unmastered').addEventListener('change', () => { state.fcIndex = 0; renderFlashcard(); });
+
+            document.getElementById('fc-prev-btn').addEventListener('click', () => {
+                state.fcIndex--;
+                renderFlashcard();
+            });
+            document.getElementById('fc-review-btn').addEventListener('click', () => {
+                const cards = getFilteredFlashcards();
+                if (cards.length > 0) {
+                    const id = cards[state.fcIndex].id;
+                    state.masteredIds = state.masteredIds.filter(m => m !== id);
+                    saveMastered();
+                    renderTdTabs();
+                }
+                state.fcIndex++;
+                renderFlashcard();
+            });
+            document.getElementById('fc-mastered-btn').addEventListener('click', () => {
+                const cards = getFilteredFlashcards();
+                if (cards.length > 0) {
+                    const id = cards[state.fcIndex].id;
+                    if (!state.masteredIds.includes(id)) {
+                        state.masteredIds.push(id);
+                        saveMastered();
+                        renderTdTabs();
+                    }
+                }
+                if (!document.getElementById('fc-only-unmastered').checked) {
+                    state.fcIndex++;
+                }
+                renderFlashcard();
+            });
+
+            // Raccourcis clavier pour les Flashcards
+            document.addEventListener('keydown', (e) => {
+                if (state.currentMode !== 'flashcards') return;
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    flipFlashcard();
+                } else if (e.code === 'ArrowRight') {
+                    state.fcIndex++;
+                    renderFlashcard();
+                } else if (e.code === 'ArrowLeft') {
+                    state.fcIndex--;
+                    renderFlashcard();
+                }
+            });
+
+            // QCM suivant
+            document.getElementById('qcm-next-btn').addEventListener('click', () => {
+                if (state.qcmCurrent + 1 < state.qcmQuestions.length) {
+                    state.qcmCurrent++;
+                    renderQCMQuestion();
+                } else {
+                    finishQCM();
+                }
+            });
+
+            // Cas pratiques navigation
+            document.getElementById('cas-prev-btn').addEventListener('click', () => { state.casIndex--; renderCasPratique(); });
+            document.getElementById('cas-next-btn').addEventListener('click', () => { state.casIndex++; renderCasPratique(); });
+            document.getElementById('cas-reveal-btn').addEventListener('click', () => {
+                document.getElementById('cas-solution').classList.remove('hidden');
+                document.getElementById('cas-reveal-btn').classList.add('hidden');
+            });
+
+            // Thème Dark/Light
+            document.getElementById('theme-toggle').addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+            });
+
+            // Modal de réinitialisation
+            document.getElementById('reset-progress-btn').addEventListener('click', () => {
+                document.getElementById('reset-modal').classList.remove('hidden');
+            });
+            document.getElementById('cancel-reset-btn').addEventListener('click', () => {
+                document.getElementById('reset-modal').classList.add('hidden');
+            });
+            document.getElementById('confirm-reset-btn').addEventListener('click', () => {
+                state.masteredIds = [];
+                saveMastered();
+                renderTdTabs();
+                renderFiches();
+                renderFlashcard();
+                document.getElementById('reset-modal').classList.add('hidden');
+            });
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
